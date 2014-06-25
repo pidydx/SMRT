@@ -1,0 +1,49 @@
+[
+    {
+        "caption": "SMRT: Unix Timestamp From Int",
+        "command": "timestamp_from_int",
+        "args": { "format": "Unix" }
+    },
+    {
+        "caption": "SMRT: Base64 Encode",
+        "command": "base_xx_encode",
+        "args": { "xx": 64 }
+    },
+    {
+        "caption": "SMRT: Base32 Encode",
+        "command": "base_xx_encode",
+        "args": { "xx": 32 }
+    },
+    {
+        "caption": "SMRT: Base16 Encode",
+        "command": "base_xx_encode",
+        "args": { "xx": 16 }
+    },
+    {
+        "caption": "SMRT: Base64 Decode",
+        "command": "base_xx_decode",
+        "args": { "xx": 64 }
+    },
+    {
+        "caption": "SMRT: Base32 Decode",
+        "command": "base_xx_decode",
+        "args": { "xx": 32 }
+    },
+    {
+        "caption": "SMRT: Base16 Decode",
+        "command": "base_xx_decode",
+        "args": { "xx": 16 }
+    },
+    {
+        "caption": "SMRT: Rot13",
+        "command": "rot13"
+    },
+    {
+        "caption": "SMRT: MD5",
+        "command": "md5"
+    },
+    {
+        "caption": "SMRT: SHA1",
+        "command": "sha1"
+    }
+]
