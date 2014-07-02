@@ -35,8 +35,17 @@
         "args": { "xx": 16 }
     },
     {
-        "caption": "SMRT: Rot13",
-        "command": "rot13"
+        "caption": "SMRT: Rot13 Encode",
+        "command": "text_translate",
+        "args": { "rot": 26 }
+    },
+    {
+        "caption": "SMRT: RotX Encode",
+        "command": "get_text_rot_value"
+    },
+    {
+        "caption": "SMRT: Swap Char",
+        "command": "get_swap_map"
     },
     {
         "caption": "SMRT: MD5",
