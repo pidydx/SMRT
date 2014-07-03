@@ -77,5 +77,15 @@
         "caption": "SMRT: DWord Format Hex",
         "command": "format_hex",
         "args": { "bytes": 4}
+    },
+    {
+        "caption": "SMRT: Base64 Encode Binary",
+        "command": "base_xx_encode_binary",
+        "args": { "xx": 64 }
+    },
+    {
+        "caption": "SMRT: Base64 Decode Binary",
+        "command": "base_xx_decode_binary",
+        "args": { "xx": 64 }
     }
 ]

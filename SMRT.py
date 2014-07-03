@@ -3,6 +3,7 @@ import base64
 import hashlib
 import time
 import re
+import binascii
 
 from string import maketrans
 
@@ -69,7 +70,7 @@ class BaseXxDecodeCommand(sublime_plugin.TextCommand):
             if not sel.empty():
             #TODO Regex for charset and check/correct padding if necessary
                 bxxtext = self.view.substr(sel)
-                text = "*No Decoding Selected*"
+                text = "*No Decoding Selected*"    
                 if xx == 64:
                     text = base64.b64decode(bxxtext)
                 if xx == 32:
@@ -77,6 +78,30 @@ class BaseXxDecodeCommand(sublime_plugin.TextCommand):
                 if xx == 16:
                     text = base64.b16decode(bxxtext)
                 self.view.replace(edit, sel, text)
+
+class BaseXxEncodeBinaryCommand(sublime_plugin.TextCommand):
+    def run(self, edit, xx=64, input="ascii", table=None):
+        for sel in self.view.sel():
+            if not sel.empty():
+                hextext = ParseHex(self.view.substr(sel))
+                data = binascii.hexlify(hextext)
+                bxxtext = "*No Encoding Selected*"
+                if xx == 64:
+                    bxxtext = binascii.b2a_base64(data)
+                self.view.replace(edit, sel, bxxtext)
+
+class BaseXxDecodeBinaryCommand(sublime_plugin.TextCommand):
+    def run(self, edit, xx=64, output="ascii", table=None):
+        for sel in self.view.sel():
+            if not sel.empty():
+            #TODO Regex for charset and check/correct padding if necessary
+                bxxtext = self.view.substr(sel)
+                text = "*No Decoding Selected*"    
+                if xx == 64:
+                    data = binascii.a2b_base64(bxxtext)
+                    hextext = binascii.unhexlify(data)
+                    formathex = FormatHex(hextext)
+                self.view.replace(edit, sel, formathex)
 
 class TextTranslateCommand(sublime_plugin.TextCommand):
     def run(self, edit, rot, transin="AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz"):
