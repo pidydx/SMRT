@@ -54,5 +54,13 @@
     {
         "caption": "SMRT: SHA1",
         "command": "sha1"
+    },
+    {
+        "caption": "SMRT: Hex to Int",
+        "command": "hex_to_int"
+    },
+    {
+        "caption": "SMRT: Int to Hex",
+        "command": "int_to_hex"
     }
 ]
