@@ -38,6 +38,17 @@ def FormatHex(hextext, bytes = 2):
     else:
         return None
 
+class FormatHexCommand(sublime_plugin.TextCommand):
+    def run (self, edit, bytes):
+        for sel in self.view.sel():
+            if not sel.empty():
+                hextext = ParseHex(self.view.substr(sel))
+                if hextext != None:
+                    formathex = FormatHex(hextext, bytes)
+                    self.view.replace(edit, sel, formathex)
+                else:
+                    self.view.replace(edit, sel, "*Non-hex Input: \\xFF\\xFF xFFxFF %FF%FF FFFF 0xFFFF expected*")
+
 class BaseXxEncodeCommand(sublime_plugin.TextCommand):
     def run(self, edit, xx=64, table=None):
         for sel in self.view.sel():

@@ -62,5 +62,20 @@
     {
         "caption": "SMRT: Int to Hex",
         "command": "int_to_hex"
+    },
+    {
+        "caption": "SMRT: Byte Format Hex",
+        "command": "format_hex",
+        "args": { "bytes": 1}
+    },
+    {
+        "caption": "SMRT: Word Format Hex",
+        "command": "format_hex",
+        "args": { "bytes": 2}
+    },
+    {
+        "caption": "SMRT: DWord Format Hex",
+        "command": "format_hex",
+        "args": { "bytes": 4}
     }
 ]
