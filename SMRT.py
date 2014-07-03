@@ -84,7 +84,7 @@ class BaseXxEncodeBinaryCommand(sublime_plugin.TextCommand):
         for sel in self.view.sel():
             if not sel.empty():
                 hextext = ParseHex(self.view.substr(sel))
-                data = binascii.hexlify(hextext)
+                data = binascii.unhexlify(hextext)
                 bxxtext = "*No Encoding Selected*"
                 if xx == 64:
                     bxxtext = binascii.b2a_base64(data)
@@ -99,7 +99,7 @@ class BaseXxDecodeBinaryCommand(sublime_plugin.TextCommand):
                 text = "*No Decoding Selected*"    
                 if xx == 64:
                     data = binascii.a2b_base64(bxxtext)
-                    hextext = binascii.unhexlify(data)
+                    hextext = binascii.hexlify(data)
                     formathex = FormatHex(hextext)
                 self.view.replace(edit, sel, formathex)
 
