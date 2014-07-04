@@ -4,20 +4,21 @@ import hashlib
 import time
 import re
 import binascii
+import zlib
 
 from string import maketrans
 
 def ParseHex(hextext):
-    if re.search(r'^(x[0-9A-F]{2})+$', hextext):
+    if re.search(r'^([xX][0-9A-F]{2})+$', hextext):
         hextext = re.sub(r'x','',hextext)
     else:
-        hextext = re.sub(r'(0x|\\x|\s|%)','',hextext).upper()
+        hextext = re.sub(r'(0[xX]|\\[xX]|\\[uU]|%[uU]|%|\s)','',hextext).upper()
     if re.search('^[0-9A-F]+$', hextext):
         return hextext
     else:
         return None
 
-def FormatHex(hextext, bytes = 2):
+def FormatHex(hextext, bytes = 1):
     step = bytes * 2
     formathex = ""
 
@@ -39,6 +40,27 @@ def FormatHex(hextext, bytes = 2):
     else:
         return None
 
+class HexEncodeCommand(sublime_plugin.TextCommand):
+    def run(self, edit, encoding="ascii"):
+        for sel in self.view.sel():
+            if not sel.empty():
+                text = self.view.substr(sel).encode(encoding)
+                hextext = binascii.hexlify(text)
+                formathex = FormatHex(hextext)
+                self.view.replace(edit, sel, formathex)
+
+class HexDecodeCommand(sublime_plugin.TextCommand):
+    def run(self, edit, encoding="ascii"):
+        for sel in self.view.sel():
+            if not sel.empty():
+                hextext = ParseHex(self.view.substr(sel))
+                if hextext != None:
+                    text = binascii.unhexlify(hextext).decode(encoding)
+                    cleantext = re.sub(r'[^ -~\t\n\r]', '.', text)
+                    self.view.replace(edit, sel, cleantext)
+                else:
+                    self.view.replace(edit, sel, "*Non-hex Input: \\xFF\\xFF xFFxFF %FF%FF \\uFFFF %uFFFF FFFF 0xFFFF expected*")
+
 class FormatHexCommand(sublime_plugin.TextCommand):
     def run (self, edit, bytes):
         for sel in self.view.sel():
@@ -48,7 +70,7 @@ class FormatHexCommand(sublime_plugin.TextCommand):
                     formathex = FormatHex(hextext, bytes)
                     self.view.replace(edit, sel, formathex)
                 else:
-                    self.view.replace(edit, sel, "*Non-hex Input: \\xFF\\xFF xFFxFF %FF%FF FFFF 0xFFFF expected*")
+                    self.view.replace(edit, sel, "*Non-hex Input: \\xFF\\xFF xFFxFF %FF%FF \\uFFFF %uFFFF FFFF 0xFFFF expected*")
 
 class BaseXxEncodeCommand(sublime_plugin.TextCommand):
     def run(self, edit, xx=64, table=None):
@@ -173,7 +195,7 @@ class HexToIntCommand(sublime_plugin.TextCommand):
                     text = str(int(hextext, 16))
                     self.view.replace(edit, sel, text)
                 else:
-                    self.view.replace(edit, sel, "*Non-hex Input: \\xFF\\xFF xFFxFF %FF%FF FFFF 0xFFFF expected*")
+                    self.view.replace(edit, sel, "*Non-hex Input: \\xFF\\xFF xFFxFF %FF%FF \\uFFFF %uFFFF FFFF 0xFFFF expected*")
 
 class GetTextRotValue(sublime_plugin.WindowCommand):
     def run(self):

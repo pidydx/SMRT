@@ -87,5 +87,35 @@
         "caption": "SMRT: Base64 Decode Binary",
         "command": "base_xx_decode_binary",
         "args": { "xx": 64 }
+    },
+    {
+        "caption": "SMRT: Hex Encode ASCII",
+        "command": "hex_encode",
+        "args": { "encoding": "ascii "}
+    },
+    {
+        "caption": "SMRT: Hex Encode UTF-8",
+        "command": "hex_encode",
+        "args": { "encoding": "utf-8"}
+    },
+    {
+        "caption": "SMRT: Hex Encode UTF-16",
+        "command": "hex_encode",
+        "args": { "encoding": "utf-16 "}
+    },
+    {
+        "caption": "SMRT: Hex Decode ASCII",
+        "command": "hex_decode",
+        "args": { "encoding": "ascii "}
+    },
+    {
+        "caption": "SMRT: Hex Decode UTF-8",
+        "command": "hex_decode",
+        "args": { "encoding": "utf-8 "}
+    },
+    {
+        "caption": "SMRT: Hex Decode UTF-16",
+        "command": "hex_decode",
+        "args": { "encoding": "utf-16"}
     }
 ]
