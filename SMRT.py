@@ -40,6 +40,34 @@ def FormatHex(hextext, bytes = 1):
     else:
         return None
 
+class ZlibCompressCommand(sublime_plugin.TextCommand):
+    def run (self, edit):
+        for sel in self.view.sel():
+            if not sel.empty():
+                hextext = ParseHex(self.view.substr(sel))
+                if hextext != None:
+                    ddata = binascii.unhexlify(hextext)
+                    cdata = zlib.compress(ddata)[2:-4]
+                    hextext = binascii.hexlify(cdata)
+                    formathex = FormatHex(hextext)
+                    self.view.replace(edit, sel, formathex)
+                else:
+                    self.view.replace(edit, sel, "*Non-hex Input: \\xFF\\xFF xFFxFF %FF%FF \\uFFFF %uFFFF FFFF 0xFFFF expected*")
+
+class ZlibDecompressCommand(sublime_plugin.TextCommand):
+    def run (self, edit):
+        for sel in self.view.sel():
+            if not sel.empty():
+                hextext = ParseHex(self.view.substr(sel))
+                if hextext != None:
+                    cdata = binascii.unhexlify(hextext)
+                    ddata = zlib.decompress(cdata,-15)
+                    hextext = binascii.hexlify(ddata)
+                    formathex = FormatHex(hextext)
+                    self.view.replace(edit, sel, formathex)
+                else:
+                    self.view.replace(edit, sel, "*Non-hex Input: \\xFF\\xFF xFFxFF %FF%FF \\uFFFF %uFFFF FFFF 0xFFFF expected*")
+
 class HexEncodeCommand(sublime_plugin.TextCommand):
     def run(self, edit, encoding="ascii"):
         for sel in self.view.sel():

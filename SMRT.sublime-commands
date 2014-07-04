@@ -117,5 +117,13 @@
         "caption": "SMRT: Hex Decode UTF-16",
         "command": "hex_decode",
         "args": { "encoding": "utf-16"}
+    },
+    {
+        "caption": "SMRT: Zlib Decompress Binary",
+        "command": "zlib_decompress"
+    },
+    {
+        "caption": "SMRT: Zlib Compress Binary",
+        "command": "zlib_compress"
     }
 ]
