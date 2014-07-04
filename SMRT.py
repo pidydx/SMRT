@@ -26,8 +26,8 @@ def FormatHex(hextext, bytes = 1):
         hextext = ParseHex(hextext)
     
     if hextext != None:
-        if len(hextext) % step != 0:
-            hextext = "0" * (step - (len(hextext) % step)) + hextext
+        if len(hextext) % 2 != 0:
+            hextext = "0" + hextext
 
         for i in range(0, len(hextext), step):
             formathex += hextext[i:i+step]
