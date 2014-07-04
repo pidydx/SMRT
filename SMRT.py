@@ -84,7 +84,7 @@ class HexDecodeCommand(sublime_plugin.TextCommand):
                 hextext = ParseHex(self.view.substr(sel))
                 if hextext != None:
                     text = binascii.unhexlify(hextext).decode(encoding)
-                    cleantext = re.sub(r'[^ -~\t\n\r]', '.', text)
+                    cleantext = re.sub(r'[\t\n\r]', '.', text)
                     self.view.replace(edit, sel, cleantext)
                 else:
                     self.view.replace(edit, sel, "*Non-hex Input: \\xFF\\xFF xFFxFF %FF%FF \\uFFFF %uFFFF FFFF 0xFFFF expected*")
@@ -110,27 +110,26 @@ class BaseXxEncodeCommand(sublime_plugin.TextCommand):
                     bxxtext = base64.b64encode(text)
                 if xx == 32:
                     bxxtext = base64.b32encode(text)
-                if xx == 16:
-                    bxxtext = base64.b16encode(text)
                 self.view.replace(edit, sel, bxxtext)
 
 class BaseXxDecodeCommand(sublime_plugin.TextCommand):
     def run(self, edit, xx=64, table=None):
         for sel in self.view.sel():
             if not sel.empty():
-            #TODO Regex for charset and check/correct padding if necessary
                 bxxtext = self.view.substr(sel)
-                text = "*No Decoding Selected*"    
-                if xx == 64:
+                text = "*Improper or No Decoding Selected*"    
+                if xx == 64 and re.search('^[A-Za-z0-9+/=]+$',bxxtext):
+                    if len(bxxtext) % 4 != 0:
+                        bxxtext += "=" * (4 - (len(bxxtext) % 4))
                     text = base64.b64decode(bxxtext)
-                if xx == 32:
+                if xx == 32 and re.search('^[A-Z2-7=]+$',bxxtext):
+                    if len(bxxtext) % 8 != 0:
+                        bxxtext += "=" * (8 - (len(bxxtext) % 8))
                     text = base64.b32decode(bxxtext)
-                if xx == 16:
-                    text = base64.b16decode(bxxtext)
                 self.view.replace(edit, sel, text)
 
 class BaseXxEncodeBinaryCommand(sublime_plugin.TextCommand):
-    def run(self, edit, xx=64, input="ascii", table=None):
+    def run(self, edit, xx=64, table=None):
         for sel in self.view.sel():
             if not sel.empty():
                 hextext = ParseHex(self.view.substr(sel))
@@ -141,7 +140,7 @@ class BaseXxEncodeBinaryCommand(sublime_plugin.TextCommand):
                 self.view.replace(edit, sel, bxxtext)
 
 class BaseXxDecodeBinaryCommand(sublime_plugin.TextCommand):
-    def run(self, edit, xx=64, output="ascii", table=None):
+    def run(self, edit, xx=64, table=None):
         for sel in self.view.sel():
             if not sel.empty():
             #TODO Regex for charset and check/correct padding if necessary
