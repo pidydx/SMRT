@@ -115,5 +115,13 @@
     {
         "caption": "SMRT: Zlib Compress Binary",
         "command": "zlib_compress"
+    },
+    {
+        "caption": "SMRT: URL Quote",
+        "command": "url_quote"
+    },
+    {
+        "caption": "SMRT: URL Unquote",
+        "command": "url_unquote"
     }
 ]

@@ -5,6 +5,7 @@ import time
 import re
 import binascii
 import zlib
+import urllib
 
 from string import maketrans
 
@@ -39,6 +40,22 @@ def FormatHex(hextext, bytes = 1):
         return formathex.upper().rstrip()
     else:
         return None
+
+class UrlUnquoteCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        for sel in self.view.sel():
+            if not sel.empty():
+                urltext = self.view.substr(sel)
+                urltext = urllib.unquote(urltext)
+                self.view.replace(edit, sel, urltext)
+
+class UrlQuoteCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        for sel in self.view.sel():
+            if not sel.empty():
+                urltext = self.view.substr(sel)
+                urltext = urllib.quote(urltext)
+                self.view.replace(edit, sel, urltext)
 
 class ZlibCompressCommand(sublime_plugin.TextCommand):
     def run (self, edit):
