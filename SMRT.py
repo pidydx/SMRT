@@ -43,6 +43,19 @@ def FormatHex(hextext, bytes = 1):
     else:
         return None
 
+class SwitchEndiannessCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        for sel in self.view.sel():
+            if not sel.empty():
+                hextext = ParseHex(self.view.substr(sel))
+                if hextext != None:
+                    bytearray = [ hextext[i:i+2] for i in range(0, len(hextext), 2) ]
+                    bytearray.reverse()
+                    hextext = "".join(bytearray)
+                    self.view.replace(edit, sel, hextext)
+                else:
+                    self.view.replace(edit, sel, "*Non-hex Input: \\xFF\\xFF xFFxFF %FF%FF \\uFFFF %uFFFF FFFF 0xFFFF expected*")
+
 class IntToIpCommand(sublime_plugin.TextCommand):
     def run(self, edit, order):
         for sel in self.view.sel():

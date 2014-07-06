@@ -143,5 +143,9 @@
         "caption": "SMRT: IP to HBO Int",
         "command": "ip_to_int",
         "args": { "order": "H"}
+    },
+    {
+        "caption": "SMRT: Switch Endianness",
+        "command": "switch_endianness"
     }
 ]
