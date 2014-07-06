@@ -6,6 +6,8 @@ import re
 import binascii
 import zlib
 import urllib
+import socket
+import struct
 
 from string import maketrans
 
@@ -14,7 +16,10 @@ def ParseHex(hextext):
         hextext = re.sub(r'x','',hextext)
     else:
         hextext = re.sub(r'(0[xX]|\\[xX]|\\[uU]|%[uU]|%|\s)','',hextext).upper()
+    
     if re.search('^[0-9A-F]+$', hextext):
+        if len(hextext) % 2 != 0:
+            hextext = "0" + hextext
         return hextext
     else:
         return None
@@ -27,9 +32,6 @@ def FormatHex(hextext, bytes = 1):
         hextext = ParseHex(hextext)
     
     if hextext != None:
-        if len(hextext) % 2 != 0:
-            hextext = "0" + hextext
-
         for i in range(0, len(hextext), step):
             formathex += hextext[i:i+step]
             if len(hextext[:i+step]) % 32 == 0:
@@ -40,6 +42,35 @@ def FormatHex(hextext, bytes = 1):
         return formathex.upper().rstrip()
     else:
         return None
+
+class IntToIpCommand(sublime_plugin.TextCommand):
+    def run(self, edit, order):
+        for sel in self.view.sel():
+            if not sel.empty():
+                inttext = self.view.substr(sel)
+                if re.search('^[0-9]+$', inttext):
+                    if order == "N":
+                        ip = socket.inet_ntoa(struct.pack('>L', int(inttext)))
+                    if order == "H":
+                        ip = socket.inet_ntoa(struct.pack('<L', int(inttext)))
+                    self.view.replace(edit, sel, ip)
+                else:
+                    self.view.replace(edit, sel, "*Non-integer Input*")
+
+class IpToIntCommand(sublime_plugin.TextCommand):
+    def run(self, edit, order):
+        for sel in self.view.sel():
+            if not sel.empty():
+                iptext = self.view.substr(sel)
+                if re.search('^((([01]{0,1}[0-9]{1,2})|(2[0-5]{2}))\.){3}(([01]{0,1}[0-9]{1,2})|(2[0-5]{2}))$',iptext):
+                    if order == "N":
+                        ipint =  struct.unpack(">L", socket.inet_aton(iptext))[0]
+                    if order == "H":
+                        ipint =  struct.unpack("<L", socket.inet_aton(iptext))[0]
+                    inttext = str(ipint)
+                    self.view.replace(edit, sel, inttext)
+                else:
+                    self.view.replace(edit, sel, "*Non-IPv4 Input*")
 
 class UrlUnquoteCommand(sublime_plugin.TextCommand):
     def run(self, edit):
