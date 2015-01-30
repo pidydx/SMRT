@@ -1,0 +1,43 @@
+Sublime Malware Research Tool
+
+Copyright 2015 Yahoo
+Authored by Sean Gillespie
+Licensed under the Apache 2.0 license.
+Code and contents listed below are attributed with the copyright holder and
+license as follows:
+
+Copyright: Yahoo
+Author: Sean Gillespie
+License: Apache 2.0
+--------------------------------------------------------
+SMRT.py
+SMRT.sublime-commands
+
+Copyright: Ero Carrera
+Author: Ero Carrera
+License: MIT License http://opensource.org/licenses/mit-license.php
+Source: https://code.google.com/p/pefile/
+--------------------------------------------------------
+peutils.py
+pefile.py
+
+Copyright: Adam Hupp
+Author: Adam Hupp
+License: MIT License http://opensource.org/licenses/mit-license.php
+Source: https://github.com/ahupp/python-magic
+--------------------------------------------------------
+magic.py
+
+Copyright: BoB / Team PEiD
+Author: BoB / Team PEiD
+License: ?
+Source: https://code.google.com/p/reverse-engineering-scripts/downloads/detail?name=UserDB.TXT
+--------------------------------------------------------
+peid.db
+
+Copyright: Michael Ligh
+Author: Michael Ligh
+License: GNU GPL v2 http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+Source: https://code.google.com/p/malwarecookbook/source/browse/trunk/3/8/pescanner.py
+--------------------------------------------------------
+pescanner.py - Modifications by Sean Gillespie/Yahoo 
