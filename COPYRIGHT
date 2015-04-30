@@ -1,14 +1,14 @@
 Sublime Malware Research Tool
 
-Copyright 2015 Sean Gillespie
+Copyright 2015 Yahoo! Inc.
 Authored by Sean Gillespie
-Licensed under the Apache 2.0 license.
+Licensed under the GPL 3.0 license.
 Code and contents listed below are attributed with the copyright holder and
 license as follows:
 
 Copyright: Sean Gillespie
 Author: Sean Gillespie
-License: GNU GPL v3 http://www.gnu.org/licenses/gpl.txt
+License: GNU GPL 3.0 http://www.gnu.org/licenses/gpl-3.0.html
 --------------------------------------------------------
 SMRT.py
 SMRT.sublime-commands
@@ -37,7 +37,7 @@ peid.db
 
 Copyright: Michael Ligh
 Author: Michael Ligh
-License: GNU GPL v3 http://www.gnu.org/licenses/gpl.txt
+License: GNU GPL 3.0 http://www.gnu.org/licenses/gpl-3.0.html
 Source: https://code.google.com/p/malwarecookbook/source/browse/trunk/3/8/pescanner.py
 --------------------------------------------------------
 pescanner.py - Modifications by Sean Gillespie

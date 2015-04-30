@@ -1,11 +1,11 @@
 # Copyright 2015 Yahoo! Inc.  
-# Licensed under the Apache 2.0 license.  Developed for Yahoo! by Sean Gillespie. 
+# Licensed under the GPL 3.0 license.  Developed for Yahoo! by Sean Gillespie. 
 #
-# Yahoo! licenses this file to you under the Apache License, Version
-# 2.0 (the "License"); you may not use this file except in compliance with the
+# Yahoo! licenses this file to you under the GPL License, Version
+# 3 (the "License"); you may not use this file except in compliance with the
 # License.  You may obtain a copy of the License at:
 #
-#        http://www.apache.org/licenses/LICENSE-2.0
+#        http://www.gnu.org/licenses/gpl-3.0.html
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
