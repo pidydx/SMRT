@@ -13,6 +13,7 @@ SMRT: RotX Encode
 SMRT: Swap Char
 SMRT: MD5
 SMRT: SHA1
+SMRT: SHA256
 SMRT: Hex to Int
 SMRT: Int to Hex
 SMRT: Byte Format Hex
@@ -35,11 +36,11 @@ SMRT: HBO Int to IP
 SMRT: IP to NBO Int
 SMRT: IP to HBO Int
 SMRT: Switch Endianness
-
+SMRT: PE Scanner
 
 Coming Soon
 
-PEScanning (w/ strings)
+
 XOR Transforms (with 00 skips)
 Find PE in Hex
 Brute Force XOR Find PE in Hex

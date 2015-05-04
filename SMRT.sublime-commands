@@ -39,11 +39,18 @@
     },
     {
         "caption": "SMRT: MD5",
-        "command": "md5"
+        "command": "hash",
+        "args": { "alg": "md5" }
     },
     {
         "caption": "SMRT: SHA1",
-        "command": "sha1"
+        "command": "hash",
+        "args": { "alg": "sha1" }
+    },
+    {
+        "caption": "SMRT: SHA256",
+        "command": "hash",
+        "args": { "alg": "sha256" }
     },
     {
         "caption": "SMRT: Hex to Int",
@@ -147,5 +154,9 @@
     {
         "caption": "SMRT: Switch Endianness",
         "command": "switch_endianness"
+    },
+    {
+        "caption": "SMRT: PE Scanner",
+        "command": "pe_scanner"
     }
 ]

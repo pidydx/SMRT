@@ -23,6 +23,7 @@ import zlib
 import urllib
 import socket
 import struct
+import pescanner
 
 from string import maketrans
 
@@ -238,28 +239,19 @@ class TextTranslateCommand(sublime_plugin.TextCommand):
                 rottext = str(text).translate(rottrans)
                 self.view.replace(edit, sel, rottext)
 
-class Rot13Command(sublime_plugin.TextCommand):
-    def run(self, edit):
-        for sel in self.view.sel():
-            if not sel.empty():
-                text = self.view.substr(sel)
-                rot13text = text.encode('rot13')
-                self.view.replace(edit, sel, rot13text)
-
-class Md5Command(sublime_plugin.TextCommand):
-    def run(self, edit):
+class HashCommand(sublime_plugin.TextCommand):
+    def run(self, edit, alg=None):
         for sel in self.view.sel():
             if not sel.empty():
                 hashtext = self.view.substr(sel)
-                hashed = hashlib.md5(hashtext).hexdigest()
-                self.view.replace(edit, sel, hashed)
-
-class Sha1Command(sublime_plugin.TextCommand):
-    def run(self, edit):
-        for sel in self.view.sel():
-            if not sel.empty():
-                hashtext = self.view.substr(sel)
-                hashed = hashlib.sha1(hashtext).hexdigest()
+                if alg == "md5":
+                    hashed = hashlib.md5(hashtext).hexdigest()
+                elif alg == "sha1":
+                    hashed = hashlib.sha1(hashtext).hexdigest()
+                elif alg == "sha256":
+                    hashed = hashlib.sha256(hashtext).hexdigest()
+                else:
+                    hashed = "*No algorithm selected*"
                 self.view.replace(edit, sel, hashed)
 
 class TimestampFromIntCommand(sublime_plugin.TextCommand):
@@ -299,6 +291,17 @@ class HexToIntCommand(sublime_plugin.TextCommand):
                     self.view.replace(edit, sel, text)
                 else:
                     self.view.replace(edit, sel, "*Non-hex Input: \\xFF\\xFF xFFxFF %FF%FF \\uFFFF %uFFFF FFFF 0xFFFF expected*")
+
+class PeScannerCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        peid_sigs = sublime.packages_path() + '/SMRT/peid.db'
+        for sel in self.view.sel():
+            hextext = ParseHex(self.view.substr(sel))
+            if hextext != None:
+                pehex = pescanner.PEScanner(binascii.unhexlify(hextext), peid_sigs=peid_sigs)
+                report_file = self.view.window().new_file()
+                report_file.set_name("PE Scanner Report")
+                report_file.insert(edit, 0, '\n'.join(pehex.collect()))
 
 class GetTextRotValue(sublime_plugin.WindowCommand):
     def run(self):

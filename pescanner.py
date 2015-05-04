@@ -60,8 +60,6 @@ alerts = ['OpenProcess', 'VirtualAllocEx', 'WriteProcessMemory', 'CreateRemoteTh
           'CreateService', 'StartService']
 # legit entry point sections
 good_ep_sections = ['.text', '.code', 'INIT', 'PAGE','CODE']
-# path to clamscan (optional)
-clamscan_path = '/usr/bin/clamscanx'
 
 def convert_char(char):
     if char in string.ascii_letters or \
@@ -265,13 +263,6 @@ class PEScanner:
                         ret.append("   %s => %s" % (hex(key), val))
         return '\n'.join(ret)
 
-    def check_clam(self, file):
-        if os.path.isfile(clamscan_path):
-            status, output = commands.getstatusoutput("%s %s" % (clamscan_path, file))
-            if status == 0:
-                return "Clamav: %s" % output.split("\n")[0]
-        return ''
-
     def header(self, msg):
         return "\n" + msg + "\n" + ("=" * 60)
 
@@ -300,13 +291,10 @@ class PEScanner:
             yarahits = self.check_yara(data)
         else:
             yarahits = []
-            
-        clamhits = self.check_clam(file)
-        
-        if len(yarahits) or len(clamhits):
+                   
+        if len(yarahits):
             out.append(self.header("Signature scans"))
             out.append(yarahits)
-            out.append(clamhits)
 
         #Meta Data
         out.append(self.header("Meta-data"))
@@ -331,6 +319,7 @@ class PEScanner:
             
         out.append("MD5:       %s"  % hashlib.md5(data).hexdigest())
         out.append("SHA1:      %s" % hashlib.sha1(data).hexdigest())
+        out.append("SHA256:      %s" % hashlib.sha256(data).hexdigest())
         
         if sys.modules.has_key('ssdeep'):
             s = ssdeep()
