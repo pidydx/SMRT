@@ -117,11 +117,33 @@
     },
     {
         "caption": "SMRT: Zlib Decompress Binary",
-        "command": "zlib_decompress"
+        "command": "zlib_decompress",
+        "args": { "wbits": 15 }
     },
     {
         "caption": "SMRT: Zlib Compress Binary",
-        "command": "zlib_compress"
+        "command": "compress",
+        "args": { "cformat": "zlib" }
+    },
+    {
+        "caption": "SMRT: INFLATE Binary",
+        "command": "zlib_decompress",
+        "args": { "wbits": -15 }
+    },
+    {
+        "caption": "SMRT: DEFLATE Binary",
+        "command": "compress",
+        "args": { "cformat": "deflate" }
+    },
+    {
+        "caption": "SMRT: Gzip Decompress Binary",
+        "command": "zlib_decompress",
+        "args": { "wbits": 31 }
+    },
+    {
+        "caption": "SMRT: Gzip Compress Binary",
+        "command": "compress",
+        "args": { "cformat": "gzip" }
     },
     {
         "caption": "SMRT: URL Quote",
