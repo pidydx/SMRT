@@ -16,7 +16,7 @@
 #
 # [NOTES] -----------------------------------------------------------
 # 1) Tested on Linux (Ubuntu), Windows XP/7, and Mac OS X
-#--------------------------------------------------------------------
+# --------------------------------------------------------------------
 
 #
 # Modifications to file for Yahoo! by Sean Gillespie
@@ -24,42 +24,22 @@
 
 import string
 import binascii
-import os
 import sys
-import commands
 import hashlib
 import time
 import re
+import SMRT.pefile.pefile as pefile
+import SMRT.pefile.peutils as peutils
+import SMRT.magic as magic
 
-
-try:
-    import pefile
-    import peutils
-except ImportError:
-    print 'pefile not installed, see http://code.google.com/p/pefile/'
-
-try:
-    import magic
-except ImportError:
-    print 'python-magic is not installed, file types will not be available'
-    
-try:
-    from ssdeep import ssdeep
-except ImportError:
-    print 'pyssdeep is not installed, see http://code.google.com/p/pyssdeep/'
-
-try:
-    import yara
-except ImportError:
-    print 'yara-python is not installed, see http://code.google.com/p/yara-project/'
-
-
-# suspicious APIs to alert on 
-alerts = ['OpenProcess', 'VirtualAllocEx', 'WriteProcessMemory', 'CreateRemoteThread', 'ReadProcessMemory',
-          'CreateProcess', 'WinExec', 'ShellExecute', 'HttpSendRequest', 'InternetReadFile', 'InternetConnect',
-          'CreateService', 'StartService']
+# suspicious APIs to alert on
+alerts = ['OpenProcess', 'VirtualAllocEx', 'WriteProcessMemory',
+          'CreateRemoteThread', 'ReadProcessMemory', 'CreateProcess',
+          'WinExec', 'ShellExecute', 'HttpSendRequest', 'InternetReadFile',
+          'InternetConnect', 'CreateService', 'StartService']
 # legit entry point sections
-good_ep_sections = ['.text', '.code', 'INIT', 'PAGE','CODE']
+good_ep_sections = ['.text', '.code', 'INIT', 'PAGE', 'CODE']
+
 
 def convert_char(char):
     if char in string.ascii_letters or \
@@ -70,32 +50,28 @@ def convert_char(char):
     else:
         return r'\x%02x' % ord(char)
 
+
 def convert_to_printable(s):
     return ''.join([convert_char(c) for c in s])
+
 
 class PEScanner:
     def __init__(self, data, yara_rules=None, peid_sigs=None):
         self.data = data
-        
-        # initialize YARA rules if provided 
-        if yara_rules and sys.modules.has_key('yara'):
-            self.rules = yara.compile(yara_rules)
-        else:
-            self.rules = None
-            
-        # initialize PEiD signatures if provided 
+
+        # initialize PEiD signatures if provided
         if peid_sigs:
             self.sigs = peutils.SignatureDatabase(peid_sigs)
         else:
             self.sigs = None
-            
+
         # initialize python magic (file identification)
-        # magic interface on python <= 2.6 is different than python >= 2.6 
-        if sys.modules.has_key('magic'):
+        # magic interface on python <= 2.6 is different than python >= 2.6
+        if 'magic' in sys.modules:
             if sys.version_info <= (2, 6):
-                self.ms = magic.open(magic.MAGIC_NONE) 
-                self.ms.load() 
-        
+                self.ms = magic.open(magic.MAGIC_NONE)
+                self.ms.load()
+
     def check_ep_section(self, pe):
         """ Determine if a PE's entry point is suspicious """
         name = ''
@@ -103,14 +79,13 @@ class PEScanner:
         for sec in pe.sections:
             if (ep >= sec.VirtualAddress) and \
                (ep < (sec.VirtualAddress + sec.Misc_VirtualSize)):
-                name = sec.Name.replace('\x00', '')
-    
-        return (ep,name)
+                name = sec.Name.decode('utf-8').replace('\x00', '')
+        return (ep, name)
 
     def check_verinfo(self, pe):
         """ Determine the version info in a PE file """
         ret = []
-        
+
         if hasattr(pe, 'VS_VERSIONINFO'):
             if hasattr(pe, 'FileInfo'):
                 for entry in pe.FileInfo:
@@ -163,7 +138,7 @@ class PEScanner:
                                 data = pe.get_data(
                                     resource_lang.data.struct.OffsetToData, 
                                     resource_lang.data.struct.Size)
-                                if sys.modules.has_key('magic'):
+                                if 'magic' in sys.modules:
                                     if sys.version_info <= (2, 6):
                                         filetype = self.ms.buffer(data)
                                     else:
@@ -243,40 +218,20 @@ class PEScanner:
                     packers.append(match)
         return packers
 
-    def check_yara(self, data):
-        ret = []
-        if self.rules:
-            yarahits = self.rules.match(data=data)
-            if yarahits:
-              for hit in yarahits:
-                ret.append("YARA: %s" % hit.rule)
-                #for key, val in hit.strings.iteritems():
-                for (key,stringname,val) in hit.strings:
-                    makehex = False
-                    for char in val:
-                        if char not in string.printable:
-                            makehex = True
-                            break
-                    if makehex == True:
-                        ret.append("   %s => %s" % (hex(key), binascii.hexlify(val)))
-                    else:
-                        ret.append("   %s => %s" % (hex(key), val))
-        return '\n'.join(ret)
-
     def header(self, msg):
         return "\n" + msg + "\n" + ("=" * 60)
 
     def collect(self):
         data = self.data
         out = []
-        if data == None or len(data) == 0:
+        if data is None or len(data) == 0:
             out.append("Cannot read %s (maybe empty?)" % file)
             out.append("")
             return out
-            
+
         try:
             pe = pefile.PE(data=data, fast_load=True)
-            pe.parse_data_directories( directories=[ 
+            pe.parse_data_directories(directories=[
                 pefile.DIRECTORY_ENTRY['IMAGE_DIRECTORY_ENTRY_IMPORT'],
                 pefile.DIRECTORY_ENTRY['IMAGE_DIRECTORY_ENTRY_EXPORT'],
                 pefile.DIRECTORY_ENTRY['IMAGE_DIRECTORY_ENTRY_TLS'],
@@ -286,32 +241,22 @@ class PEScanner:
             out.append("")
             return out
 
-        # Signature Checks
-        if sys.modules.has_key('yara'):
-            yarahits = self.check_yara(data)
-        else:
-            yarahits = []
-                   
-        if len(yarahits):
-            out.append(self.header("Signature scans"))
-            out.append(yarahits)
-
-        #Meta Data
+        # Meta Data
         out.append(self.header("Meta-data"))
         out.append("Size:      %d bytes" % len(data))
         out.append("Date:      %s" % self.get_timestamp(pe))
-        
+
         exportdll = self.check_exportdll(pe)
         if len(exportdll):
             out.append("ExportDll: %s" % exportdll)
-        (ep,name) = self.check_ep_section(pe)
-        
+        (ep, name) = self.check_ep_section(pe)
+
         s = "EP:        %s (%s)" % (hex(ep+pe.OPTIONAL_HEADER.ImageBase), name)
         if name not in good_ep_sections:
             s += " [SUSPICIOUS]"
         out.append(s)
-        
-        if sys.modules.has_key('magic'):
+
+        if 'magic' in sys.modules:
             if sys.version_info <= (2, 6):
                 out.append("Type:      %s" % self.ms.buffer(data))
             else:
@@ -320,10 +265,6 @@ class PEScanner:
         out.append("MD5:       %s"  % hashlib.md5(data).hexdigest())
         out.append("SHA1:      %s" % hashlib.sha1(data).hexdigest())
         out.append("SHA256:      %s" % hashlib.sha256(data).hexdigest())
-        
-        if sys.modules.has_key('ssdeep'):
-            s = ssdeep()
-            out.append("ssdeep:    %s" % s.hash_file(file))
 
         packers = self.check_packers(pe)
         if len(packers):
@@ -342,9 +283,9 @@ class PEScanner:
         
         for sec in pe.sections:
             s = "%-10s %-12s %-12s %-12s %-12f" % (
-                ''.join([c for c in sec.Name if c in string.printable]), 
-                hex(sec.VirtualAddress), 
-                hex(sec.Misc_VirtualSize), 
+                sec.Name.decode('utf-8').replace('\x00', ''),
+                hex(sec.VirtualAddress),
+                hex(sec.Misc_VirtualSize),
                 hex(sec.SizeOfRawData),
                 sec.get_entropy())
             if sec.SizeOfRawData == 0 or \
@@ -394,15 +335,15 @@ class PEScanner:
                 out.append(imp)
 
         #Strings
-        results = []
-        patterns = ["[ -~]{2,}[\\\/][ -~]{2,}", "[ -~]{2,}\.[ -~]{2,}","\\\[ -~]{5,}","^[ -~]{5,}[\\\/]$","[ -~]+\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}[ -~]+"]
+        # results = []
+        # patterns = ["[ -~]{2,}[\\\/][ -~]{2,}", "[ -~]{2,}\.[ -~]{2,}","\\\[ -~]{5,}","^[ -~]{5,}[\\\/]$","[ -~]+\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}[ -~]+"]
                 
-        for pattern in patterns:
-            regex = re.compile(pattern)
-            results += regex.findall(data)
-        if len(results):
-            out.append(self.header("Interesting Strings"))
-            out += list(set(results))
+        # for pattern in patterns:
+        #     regex = re.compile(pattern)
+        #     results += regex.findall(data)
+        # if len(results):
+        #     out.append(self.header("Interesting Strings"))
+        #     out += list(set(results))
               
         out.append("")
         return out

@@ -1,5 +1,9 @@
 Sublime Malware Research Tool
 
+You must have libmagic installed
+'brew install libmagic'
+
+
 This is a Plugin for Sublime Text 2 to provide a number of commonly used tools related to malware analysis and research.
 
 Current Commands

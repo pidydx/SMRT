@@ -18,15 +18,14 @@ Author: Ero Carrera
 License: MIT License http://opensource.org/licenses/mit-license.php
 Source: https://code.google.com/p/pefile/
 --------------------------------------------------------
-peutils.py
-pefile.py
+pefile/*
 
 Copyright: Adam Hupp
 Author: Adam Hupp
 License: MIT License http://opensource.org/licenses/mit-license.php
 Source: https://github.com/ahupp/python-magic
 --------------------------------------------------------
-magic.py
+magic/magic.py
 
 Copyright: BoB / Team PEiD
 Author: BoB / Team PEiD
@@ -40,4 +39,4 @@ Author: Michael Ligh
 License: GNU GPL 3.0 http://www.gnu.org/licenses/gpl-3.0.html
 Source: https://code.google.com/p/malwarecookbook/source/browse/trunk/3/8/pescanner.py
 --------------------------------------------------------
-pescanner.py - Modifications by Sean Gillespie
+pescanner/pescanner.py - Modifications by Sean Gillespie

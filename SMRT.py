@@ -1,5 +1,5 @@
-# Copyright 2015 Yahoo! Inc.  
-# Licensed under the GPL 3.0 license.  Developed for Yahoo! by Sean Gillespie. 
+# Copyright 2015 Yahoo! Inc.
+# Licensed under the GPL 3.0 license.  Developed for Yahoo! by Sean Gillespie.
 #
 # Yahoo! licenses this file to you under the GPL License, Version
 # 3 (the "License"); you may not use this file except in compliance with the
@@ -13,7 +13,8 @@
 # implied.  See the License for the specific language governing
 # permissions and limitations under the License.
 
-import sublime, sublime_plugin
+import sublime
+import sublime_plugin
 import base64
 import hashlib
 import time
@@ -23,16 +24,18 @@ import zlib
 import urllib
 import socket
 import struct
-import pescanner
+from SMRT.pescanner import pescanner
 
-from string import maketrans
+# from string import maketrans
+
 
 def ParseHex(hextext):
     if re.search(r'^([xX][0-9A-F]{2})+$', hextext):
-        hextext = re.sub(r'x','',hextext)
+        hextext = re.sub(r'x', '', hextext)
     else:
-        hextext = re.sub(r'(0[xX]|\\[xX]|\\[uU]|%[uU]|%|\s)','',hextext).upper()
-    
+        hextext = re.sub(r'(0[xX]|\\[xX]|\\[uU]|%[uU]|%|\s)',
+                         '', hextext).upper()
+
     if re.search('^[0-9A-F]+$', hextext):
         if len(hextext) % 2 != 0:
             hextext = "0" + hextext
@@ -40,14 +43,15 @@ def ParseHex(hextext):
     else:
         return None
 
-def FormatHex(hextext, bytes = 1):
+
+def FormatHex(hextext, bytes=1):
     step = bytes * 2
     formathex = ""
 
     if not re.search('^[0-9A-F]+$', hextext):
         hextext = ParseHex(hextext)
-    
-    if hextext != None:
+
+    if hextext is not None:
         for i in range(0, len(hextext), step):
             formathex += hextext[i:i+step]
             if len(hextext[:i+step]) % 32 == 0:
@@ -59,13 +63,14 @@ def FormatHex(hextext, bytes = 1):
     else:
         return None
 
+
 class SwitchEndiannessCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         for sel in self.view.sel():
             if not sel.empty():
                 hextext = ParseHex(self.view.substr(sel))
-                if hextext != None:
-                    bytearray = [ hextext[i:i+2] for i in range(0, len(hextext), 2) ]
+                if hextext is not None:
+                    bytearray = [hextext[i:i+2] for i in range(0, len(hextext), 2)]
                     bytearray.reverse()
                     hextext = "".join(bytearray)
                     self.view.replace(edit, sel, hextext)

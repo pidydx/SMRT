@@ -2,7 +2,7 @@
 """peutils, Portable Executable utilities module
 
 
-Copyright (c) 2005-2012 Ero Carrera <ero.carrera@gmail.com>
+Copyright (c) 2005-2013 Ero Carrera <ero.carrera@gmail.com>
 
 All rights reserved.
 
@@ -14,7 +14,7 @@ import os
 import re
 import string
 import urllib
-import pefile
+import SMRT.pefile.pefile as pefile
 
 __author__ = 'Ero Carrera'
 __version__ = pefile.__version__
@@ -195,7 +195,7 @@ class SignatureDatabase:
             #
             try :
                 data = pe.__data__
-            except Exception, excp :
+            except Exception as excp :
                 raise
 
             # Load the corresponding tree of signatures
@@ -213,7 +213,7 @@ class SignatureDatabase:
             #
             try :
                 data = pe.get_memory_mapped_image()
-            except Exception, excp :
+            except Exception as excp :
                 raise
 
             # Load the corresponding tree of signatures
@@ -319,7 +319,7 @@ class SignatureDatabase:
         # Walk the bytes in the data and match them
         # against the signature
         #
-        for idx, byte in enumerate ( [ord (b) for b in data] ):
+        for idx, byte in enumerate(data):
 
             # If the tree is exhausted...
             #
@@ -353,7 +353,7 @@ class SignatureDatabase:
             # If a wildcard is found keep scanning the signature
             # ignoring the byte.
             #
-            if match.has_key ('??') :
+            if '??' in match:
                 match_tree_alternate = match.get ('??', None)
                 data_remaining = data[idx + 1 :]
                 if data_remaining:
@@ -402,7 +402,7 @@ class SignatureDatabase:
                 # Get the data for a file
                 #
                 try:
-                    sig_f = file( filename, 'rt' )
+                    sig_f = open(filename, 'rt', encoding='utf-8')
                     sig_data = sig_f.read()
                     sig_f.close()
                 except IOError:
