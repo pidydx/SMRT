@@ -67,10 +67,9 @@ class PEScanner:
 
         # initialize python magic (file identification)
         # magic interface on python <= 2.6 is different than python >= 2.6
-        if 'magic' in sys.modules:
-            if sys.version_info <= (2, 6):
-                self.ms = magic.open(magic.MAGIC_NONE)
-                self.ms.load()
+        if sys.version_info <= (2, 6):
+            self.ms = magic.open(magic.MAGIC_NONE)
+            self.ms.load()
 
     def check_ep_section(self, pe):
         """ Determine if a PE's entry point is suspicious """
@@ -130,14 +129,12 @@ class PEScanner:
                                 data = pe.get_data(
                                     resource_lang.data.struct.OffsetToData, 
                                     resource_lang.data.struct.Size)
-                                if 'magic' in sys.modules:
+                                try:
                                     if sys.version_info <= (2, 6):
-                                        filetype = self.ms.buffer(data)
+                                        filetype = self.ms.buffer(data).decode('utf-8')
                                     else:
-                                        filetype = magic.from_buffer(data)
-                                else:
-                                    filetype = None
-                                if filetype is None:
+                                        filetype = magic.from_buffer(data).decode('utf-8')
+                                except:
                                     filetype = ''
                                 ret[i] = (name, resource_lang.data.struct.OffsetToData, resource_lang.data.struct.Size, filetype)
                                 i += 1
@@ -248,11 +245,13 @@ class PEScanner:
             s += " [SUSPICIOUS]"
         out.append(s)
 
-        if 'magic' in sys.modules:
+        try:
             if sys.version_info <= (2, 6):
-                out.append("Type:      %s" % self.ms.buffer(data))
+                out.append("Type:      %s" % self.ms.buffer(data).decode('utf-8'))
             else:
-                out.append("Type:      %s" % magic.from_buffer(data))
+                out.append("Type:      %s" % magic.from_buffer(data).decode('utf-8'))
+        except:
+            out.append("Type:      data")
 
         out.append("MD5:       %s" % hashlib.md5(data).hexdigest())
         out.append("SHA1:      %s" % hashlib.sha1(data).hexdigest())
@@ -261,18 +260,18 @@ class PEScanner:
         packers = self.check_packers(pe)
         if len(packers):
             out.append("Packers:   %s" % ','.join(packers))
-        
-        #Version Info
+
+        # Version Info
         verinfo = self.check_verinfo(pe)
         if len(verinfo):
             out.append(self.header("Version info"))
             out.append(verinfo)
-        
-        #Sections
+
+        # Sections
         out.append(self.header("Sections"))
         out.append("%-10s %-12s %-12s %-12s %-12s" % ("Name", "VirtAddr", "VirtSize", "RawSize", "Entropy"))
         out.append("-" * 60)
-        
+
         for sec in pe.sections:
             s = "%-10s %-12s %-12s %-12s %-12f" % (
                 sec.Name.decode('utf-8').replace('\x00', ''),
@@ -286,7 +285,7 @@ class PEScanner:
                 s += "[SUSPICIOUS]"
             out.append(s)
 
-        # Resources  
+        # Resources
         resources = self.check_rsrc(pe)
         if len(resources):
             out.append(self.header("Resource entries"))
@@ -326,10 +325,10 @@ class PEScanner:
             for imp in imports:
                 out.append(imp)
 
-        #Strings
+        # Strings
         # results = []
         # patterns = ["[ -~]{2,}[\\\/][ -~]{2,}", "[ -~]{2,}\.[ -~]{2,}","\\\[ -~]{5,}","^[ -~]{5,}[\\\/]$","[ -~]+\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}[ -~]+"]
-                
+
         # for pattern in patterns:
         #     regex = re.compile(pattern)
         #     results += regex.findall(data)
