@@ -92,29 +92,21 @@ class PEScanner:
                     if hasattr(entry, 'StringTable'):
                         for st_entry in entry.StringTable:
                             for str_entry in st_entry.entries.items():
-                                ret.append(
-                                    convert_to_printable(str_entry[0]) + ': ' +
-                                    convert_to_printable(str_entry[1]) )
-                    elif hasattr(entry, 'Var'):
-                        for var_entry in entry.Var:
-                            if hasattr(var_entry, 'entry'):
-                                ret.append(
-                                    convert_to_printable(var_entry.entry.keys()[0]) +
-                                    ': ' + var_entry.entry.values()[0])
+                                ret.append(str_entry[0] + ': ' + str_entry[1])
         return '\n'.join(ret)
 
     def check_tls(self, pe):
         callbacks = []
-        if (hasattr(pe, 'DIRECTORY_ENTRY_TLS') and \
-                    pe.DIRECTORY_ENTRY_TLS and \
-                    pe.DIRECTORY_ENTRY_TLS.struct and \
-                    pe.DIRECTORY_ENTRY_TLS.struct.AddressOfCallBacks):
-            callback_array_rva = pe.DIRECTORY_ENTRY_TLS.struct.AddressOfCallBacks \
-                    - pe.OPTIONAL_HEADER.ImageBase 
+        if (hasattr(pe, 'DIRECTORY_ENTRY_TLS') and
+           pe.DIRECTORY_ENTRY_TLS and
+           pe.DIRECTORY_ENTRY_TLS.struct and
+           pe.DIRECTORY_ENTRY_TLS.struct.AddressOfCallBacks):
+
+            callback_array_rva = pe.DIRECTORY_ENTRY_TLS.struct.AddressOfCallBacks - pe.OPTIONAL_HEADER.ImageBase
             idx = 0
             while True:
                 func = pe.get_dword_from_data(pe.get_data(callback_array_rva + 4 * idx, 4), 0)
-                if func == 0: 
+                if func == 0:
                     break
                 callbacks.append(func)
                 idx += 1
@@ -129,7 +121,7 @@ class PEScanner:
                     name = "%s" % resource_type.name
                 else:
                     name = "%s" % pefile.RESOURCE_TYPE.get(resource_type.struct.Id)
-                if name == None:
+                if name is None:
                     name = "%d" % resource_type.struct.Id
                 if hasattr(resource_type, 'directory'):
                     for resource_id in resource_type.directory.entries:
@@ -145,18 +137,18 @@ class PEScanner:
                                         filetype = magic.from_buffer(data)
                                 else:
                                     filetype = None
-                                if filetype == None:
+                                if filetype is None:
                                     filetype = ''
                                 ret[i] = (name, resource_lang.data.struct.OffsetToData, resource_lang.data.struct.Size, filetype)
                                 i += 1
-        return ret           
-        
+        return ret
+
     def check_libs(self, pe):
         ret = []
         if not hasattr(pe, 'DIRECTORY_ENTRY_IMPORT'):
             return ret
         for lib in pe.DIRECTORY_ENTRY_IMPORT:
-            if (lib.dll != None) and (lib.dll != ""):
+            if (lib.dll is not None) and (lib.dll != ""):
                 ret.append(lib.dll)
         return ret
 
@@ -167,8 +159,8 @@ class PEScanner:
         for lib in pe.DIRECTORY_ENTRY_IMPORT:
             for imp in lib.imports:
                 if (imp.name != ""):
-                    if (imp.name == None):
-                        importname = lib.dll +":"+ "%04x" % imp.ordinal
+                    if (imp.name is None):
+                        importname = lib.dll + ":" + "%04x" % imp.ordinal
                     else:
                         importname = imp.name
                     for alert in alerts:
@@ -176,7 +168,7 @@ class PEScanner:
                             importname += ('%-30s%s') % (importname, "[SUSPICIOUS]")
                     ret.append(importname)
         return ret
-    
+
     def check_exportdll(self, pe):
         ret = ""
         if hasattr(pe, 'DIRECTORY_ENTRY_EXPORT'):
@@ -195,12 +187,12 @@ class PEScanner:
                     exportinfo += ('%s' % exp.forwarder)
                 ret.append(exportinfo)
         return ret
-        
+
     def get_timestamp(self, pe):
         val = pe.FILE_HEADER.TimeDateStamp
         ts = '0x%-8X' % (val)
         try:
-            ts = '%s\t[%s]' % (time.strftime("%Y-%m-%dT%H:%M:%SZ",time.gmtime(val)),ts)
+            ts = '%s\t[%s]' % (time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(val)), ts)
             that_year = time.gmtime(val)[0]
             this_year = time.gmtime(time.time())[0]
             if that_year < 2000 or that_year > this_year:
@@ -212,8 +204,8 @@ class PEScanner:
     def check_packers(self, pe):
         packers = []
         if self.sigs:
-            matches = self.sigs.match(pe, ep_only = True)
-            if matches != None:
+            matches = self.sigs.match(pe, ep_only=True)
+            if matches is not None:
                 for match in matches:
                     packers.append(match)
         return packers
@@ -261,10 +253,10 @@ class PEScanner:
                 out.append("Type:      %s" % self.ms.buffer(data))
             else:
                 out.append("Type:      %s" % magic.from_buffer(data))
-            
-        out.append("MD5:       %s"  % hashlib.md5(data).hexdigest())
+
+        out.append("MD5:       %s" % hashlib.md5(data).hexdigest())
         out.append("SHA1:      %s" % hashlib.sha1(data).hexdigest())
-        out.append("SHA256:      %s" % hashlib.sha256(data).hexdigest())
+        out.append("SHA256:    %s" % hashlib.sha256(data).hexdigest())
 
         packers = self.check_packers(pe)
         if len(packers):
@@ -293,25 +285,25 @@ class PEScanner:
                sec.get_entropy() > 7:
                 s += "[SUSPICIOUS]"
             out.append(s)
-        
-        #Resources  
+
+        # Resources  
         resources = self.check_rsrc(pe)
         if len(resources):
             out.append(self.header("Resource entries"))
             out.append("%-18s %-12s %-12s Type" % ("Name", "RVA", "Size"))
             out.append("-" * 60)
             for rsrc in resources.keys():
-                (name,rva,size,type) = resources[rsrc]
-                out.append("%-18s %-12s %-12s %s" % (name,hex(rva),hex(size),type))
-        
-        #TLS Callbacks        
+                (name, rva, size, type) = resources[rsrc]
+                out.append("%-18s %-12s %-12s %s" % (name, hex(rva), hex(size), type))
+
+        # TLS Callbacks
         callbacks = self.check_tls(pe)
         if len(callbacks):
             out.append(self.header("TLS callbacks"))
             for cb in callbacks:
                 out.append("    0x%x" % cb)
 
-        #Exports
+        # Exports
         exports = self.check_exports(pe)
         if len(exports):
             out.append(self.header("Exported Functions"))
@@ -320,14 +312,14 @@ class PEScanner:
             for exp in exports:
                 out.append(exp)
 
-        #Libraries
+        # Libraries
         libs = self.check_libs(pe)
         if len(libs):
             out.append(self.header("Import Libs"))
             for lib in libs:
                 out.append(lib)
-        
-        #Imports
+
+        # Imports
         imports = self.check_imports(pe)
         if len(imports):
             out.append(self.header("Imported Functions"))
@@ -344,6 +336,6 @@ class PEScanner:
         # if len(results):
         #     out.append(self.header("Interesting Strings"))
         #     out += list(set(results))
-              
+
         out.append("")
         return out

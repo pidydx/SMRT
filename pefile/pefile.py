@@ -3102,13 +3102,11 @@ class PE:
                 'attempting to read VS_VERSION_INFO string. Can\'t ' +
                 'read unicode string at offset 0x%x' % (
                 ustr_offset ) )
-
             versioninfo_string = None
 
         # If the structure does not contain the expected name, it's assumed to be invalid
         #
         if versioninfo_string != u'VS_VERSION_INFO':
-
             self.__warnings.append('Invalid VS_VERSION_INFO block')
             return
 
@@ -3116,7 +3114,6 @@ class PE:
         # Set the PE object's VS_VERSIONINFO to this one
         #
         self.VS_VERSIONINFO = versioninfo_struct
-        print(type(versioninfo_struct))
 
         # The the Key attribute to point to the unicode string identifying the structure
         #
@@ -3372,7 +3369,7 @@ class PE:
                                 raw_data[varword_offset+2:varword_offset+4], 0)
                             varword_offset += 4
 
-                            if isinstance(word1, (int, long)) and isinstance(word2, (int, long)):
+                            if isinstance(word1, (int, int)) and isinstance(word2, (int, int)):
                                 var_struct.entry = {var_string: '0x%04x 0x%04x' % (word1, word2)}
 
                         var_offset = self.dword_align(
@@ -4211,18 +4208,18 @@ class PE:
         except PEFormatError as e:
             return None
 
-        s = u''
+        s = b''
         for idx in range(max_length):
             try:
-                uchr = struct.unpack('<H', self.get_data(rva+2*idx, 2))[0]
+                # uchr = struct.unpack('<H', self.get_data(rva+2*idx, 2))[0]
+                uchr = self.get_data(rva+2*idx, 2)
             except struct.error:
                 break
 
-            if unichr(uchr) == u'\0':
+            if uchr == b'\x00\x00':
                 break
-            s += unichr(uchr)
-
-        return s
+            s += uchr
+        return s.decode('utf-16')
 
 
     def get_section_by_offset(self, offset):
