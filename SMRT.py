@@ -44,7 +44,7 @@ def ParseHex(hextext):
         return None
 
 
-def FormatHex(hextext, bytes=1):
+def FormatHex(hextext, bytes=1, newlines=True):
     step = bytes * 2
     formathex = ""
 
@@ -54,7 +54,7 @@ def FormatHex(hextext, bytes=1):
     if hextext is not None:
         for i in range(0, len(hextext), step):
             formathex += hextext[i:i+step]
-            if len(hextext[:i+step]) % 32 == 0:
+            if len(hextext[:i+step]) % 32 == 0 and newlines:
                 formathex += "\n"
             else:
                 formathex += " "
@@ -62,6 +62,23 @@ def FormatHex(hextext, bytes=1):
         return formathex.upper().rstrip()
     else:
         return None
+
+
+def XorData(hextext, xor, skip_zero_and_key):
+    xorlen = len(xor)
+    xorbyte = int(xor, 16)
+    xortext = ''
+    chunks, chunk_size = len(hextext), xorlen
+    bytearray = [hextext[i:i+chunk_size] for i in range(0, chunks, chunk_size)]
+    for bytechunk in bytearray:
+        if skip_zero_and_key:
+            if int(bytechunk, 16) == xorbyte or int(bytechunk, 16) == 0:
+                xortext += bytechunk.lower()
+            else:
+                xortext += "{0:0{1}x}".format((int(bytechunk, 16) ^ xorbyte), len(bytechunk))
+        else:
+            xortext += "{0:0{1}x}".format((int(bytechunk, 16) ^ xorbyte), len(bytechunk))
+    return xortext
 
 
 class SwitchEndiannessCommand(sublime_plugin.TextCommand):
@@ -362,3 +379,65 @@ class GetSwapMap(sublime_plugin.WindowCommand):
         else:
             if self.window.active_view():
                 self.window.active_view().run_command("display_input_error", {"errortext": "*Invalid Swap Map: Use Xx:Yy format*"})
+
+
+class ApplyXorCommand(sublime_plugin.TextCommand):
+    def run(self, edit, xor, skip_zero_and_key):
+        for sel in self.view.sel():
+            if not sel.empty():
+                hextext = ParseHex(self.view.substr(sel))
+                if hextext is not None and (len(hextext) % len(xor) == 0):
+                    xor_hextext = XorData(hextext, xor, skip_zero_and_key)
+                    formathex = FormatHex(xor_hextext)
+                    self.view.replace(edit, sel, formathex)
+                else:
+                    self.view.replace(edit, sel, "*Invalid Hex Data or Length*")
+
+
+class ApplyXorRangeCommand(sublime_plugin.TextCommand):
+    def run(self, edit, xor_range, skip_zero_and_key):
+        first_byte, last_byte = xor_range.split("-")
+        if len(first_byte) == len(last_byte):
+            first = int(first_byte, 16)
+            last = int(last_byte, 16)
+            if first < last:
+                byte_range = range(first, last)
+            else:
+                byte_range = range(last, first)
+
+            output = ''
+            for sel in self.view.sel():
+                if not sel.empty():
+                    hextext = ParseHex(self.view.substr(sel))
+                    if hextext is not None and (len(hextext) % len(first_byte) == 0):
+                        for byte in byte_range:
+                            xor = "%X" % byte
+                            xor = xor.zfill(len(first_byte))
+                            xor_hextext = XorData(hextext, xor, skip_zero_and_key)
+                            formathex = FormatHex(xor_hextext, newlines=False)
+                            text = re.sub(r'(\\x[a-f0-9]{2}|\\t|\\r|\\n)', '.', str(binascii.unhexlify(xor_hextext)).rstrip().lstrip())[2:-1]
+                            output += xor + ":\t\t" + formathex + "\t\t" + text + "\n"
+                        outputfile = self.view.window().new_file()
+                        outputfile.set_name("XOR Range: " + first_byte + "-" + last_byte)
+                        outputfile.insert(edit, 0, output)
+                    else:
+                        self.view.replace(edit, sel, "*Invalid Hex Data or Length*")
+        else:
+            self.view.replace(edit, sel, "*Start and End byte length mismatch*")
+
+
+class GetXorKeys(sublime_plugin.WindowCommand):
+    def run(self, skip_zero_and_key=False):
+        self.skip_zero_and_key = skip_zero_and_key
+        self.window.show_input_panel('XOR Bytes', '', self.on_done, None, None)
+
+    def on_done(self, xor):
+        try:
+            if re.search('^([A-F0-9]{2})+$', xor.upper()):
+                if self.window.active_view():
+                    self.window.active_view().run_command("apply_xor", {"xor": xor, "skip_zero_and_key": self.skip_zero_and_key})
+            elif re.search('^([A-F0-9]{2})+-([A-F0-9]{2})+$', xor.upper()):
+                if self.window.active_view():
+                    self.window.active_view().run_command("apply_xor_range", {"xor_range": xor, "skip_zero_and_key": self.skip_zero_and_key})
+        except ValueError:
+            pass

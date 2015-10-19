@@ -180,5 +180,14 @@
     {
         "caption": "SMRT: PE Scanner",
         "command": "pe_scanner"
-    }
+    },
+    {
+        "caption": "SMRT: Apply XOR",
+        "command": "get_xor_keys"
+    },
+    {
+        "caption": "SMRT: Apply XOR Skip Zero and Key",
+        "command": "get_xor_keys",
+        "args": { "skip_zero_and_key": "True"}
+    },
 ]
