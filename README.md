@@ -20,12 +20,12 @@ Windows: https://github.com/pidydx/libmagicwin64
 - SMRT: Base64 Decode
 - SMRT: Base32 Decode
 - SMRT: Rot13 Encode
-- SMRT: RotX Encode
+- SMRT: RotX Encode (Prompts for integer distance to rotate text)
 - SMRT: Swap Char
 - SMRT: MD5
 - SMRT: SHA1
 - SMRT: SHA256
-- SMRT: Hex to Int
+- SMRT: Hex to Int 
 - SMRT: Int to Hex
 - SMRT: Byte Format Hex
 - SMRT: Word Format Hex
@@ -38,24 +38,25 @@ Windows: https://github.com/pidydx/libmagicwin64
 - SMRT: Hex Decode ASCII
 - SMRT: Hex Decode UTF-8
 - SMRT: Hex Decode UTF-16
-- SMRT: Zlib Decompress Binary
-- SMRT: Zlib Compress Binary
-- SMRT: Gzip Decompress Binary
-- SMRT: Gzip Compress Binary
-- SMRT: INFLATE Binary
-- SMRT: DEFLATE Binary
+- SMRT: Zlib Decompress Binary (Expects Hex Text)
+- SMRT: Zlib Compress Binary (Expects Hex Text)
+- SMRT: Gzip Decompress Binary (Expects Hex Text)
+- SMRT: Gzip Compress Binary (Expects Hex Text)
+- SMRT: INFLATE Binary (Expects Hex Text)
+- SMRT: DEFLATE Binary (Expects Hex Text)
 - SMRT: URL Quote
 - SMRT: URL Unquote
 - SMRT: NBO Int to IP
 - SMRT: HBO Int to IP
 - SMRT: IP to NBO Int
 - SMRT: IP to HBO Int
-- SMRT: Switch Endianness
-- SMRT: PE Scanner
+- SMRT: Switch Endianness (Expects Hex Text)
+- SMRT: PE Scanner (Expects Hex Text)
+- SMRT: Apply XOR (Prompts for hex key or range. Examples: FF, 00-FF, DEAD, 0000-FFFF)
+- SMRT: Apply XOR Skip Zero and Key (Prompts for hex key or range. Examples: FF, 00-FF, DEAD, 0000-FFFF)
 
 ## Coming Soon
 
-- XOR Transforms (with 00 skips)
 - Find PE in Hex
 - Brute Force XOR Find PE in Hex
 - Custom BaseXX Encode/Decodes
@@ -63,4 +64,4 @@ Windows: https://github.com/pidydx/libmagicwin64
 - Int Math (ADD,SUB,MULT,DIV)
 - Mail Extraction
 - Strings on PE
-- Magic
+- Magic on data
