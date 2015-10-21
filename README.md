@@ -21,7 +21,7 @@ Windows: https://github.com/pidydx/libmagicwin64
 - SMRT: Base32 Decode
 - SMRT: Rot13 Encode
 - SMRT: RotX Encode (Prompts for integer distance to rotate text)
-- SMRT: Swap Char
+- SMRT: Swap Char (prompts for substitution map in Xx:Yy format)
 - SMRT: MD5
 - SMRT: SHA1
 - SMRT: SHA256
