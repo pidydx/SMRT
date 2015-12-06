@@ -81,6 +81,55 @@ def XorData(hextext, xor, skip_zero_and_key):
     return xortext
 
 
+class BintxtToHexCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        for sel in self.view.sel():
+            if not sel.empty():
+                bintxttext = self.view.substr(sel)
+                bintxttext = re.sub(r'\s', '', bintxttext)
+                if re.search('[01]+$', bintxttext):
+                    hextext = FormatHex("%x" % (int(bintxttext, 2)))
+                    self.view.replace(edit, sel, hextext)
+                else:
+                    self.view.replace(edit, sel, "*Non-binary text Input: 1's and 0's expected *")
+
+
+class IntToAlpha(sublime_plugin.TextCommand):
+    def run(self, edit):
+        for sel in self.view.sel():
+            if not sel.empty():
+                alpha = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
+                alphatxt = []
+                inttxt = self.view.substr(sel)
+                intarray = inttxt.split()
+                for element in intarray:
+                    try:
+                        index = int(element)
+                        alphatxt.append(alpha[index - 1])
+                    except (IndexError, ValueError):
+                        self.view.replace(edit, sel, "*Bad Int Array: Expects numbers 1-26 separated by spaces.*")
+                        return
+                self.view.replace(edit, sel, ' '.join(alphatxt))
+
+
+class AlphaToInt(sublime_plugin.TextCommand):
+    def run(self, edit):
+        for sel in self.view.sel():
+            if not sel.empty():
+                alpha = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
+                inttxt = []
+                alphatxt = self.view.substr(sel)
+                alphatxt = re.sub(r'\s', '', alphatxt)
+                for letter in alphatxt:
+                    try:
+                        index = alpha.index(letter.lower())
+                        inttxt.append(str(index + 1))
+                    except (IndexError, ValueError):
+                        self.view.replace(edit, sel, "*Bad Alpha Array: Expects upper or lower letters A-Z.*")
+                        return
+                self.view.replace(edit, sel, ' '.join(inttxt))
+
+
 class SwitchEndiannessCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         for sel in self.view.sel():

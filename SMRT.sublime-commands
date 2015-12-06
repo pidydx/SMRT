@@ -190,4 +190,16 @@
         "command": "get_xor_keys",
         "args": { "skip_zero_and_key": "True"}
     },
+    {
+        "caption": "SMRT: Binary Text to Hex",
+        "command": "bintxt_to_hex",
+    },
+    {
+        "caption": "SMRT: Int to Alpha",
+        "command": "int_to_alpha",
+    },
+    {
+        "caption": "SMRT: Alpha to Int",
+        "command": "alpha_to_int",
+    }
 ]
