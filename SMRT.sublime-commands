@@ -126,12 +126,12 @@
         "args": { "cformat": "zlib" }
     },
     {
-        "caption": "SMRT: INFLATE Compress Binary",
+        "caption": "SMRT: INFLATE Decompress Binary",
         "command": "zlib_decompress",
         "args": { "wbits": -15 }
     },
     {
-        "caption": "SMRT: DEFLATE Decompress Binary",
+        "caption": "SMRT: DEFLATE Compress Binary",
         "command": "compress",
         "args": { "cformat": "deflate" }
     },
