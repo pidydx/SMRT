@@ -42,8 +42,8 @@ Windows: https://github.com/pidydx/libmagicwin64
 - SMRT: Zlib Compress Binary (Expects Hex Text)
 - SMRT: Gzip Decompress Binary (Expects Hex Text)
 - SMRT: Gzip Compress Binary (Expects Hex Text)
-- SMRT: INFLATE Binary (Expects Hex Text)
-- SMRT: DEFLATE Binary (Expects Hex Text)
+- SMRT: INFLATE Decompress Binary (Expects Hex Text)
+- SMRT: DEFLATE Compress Binary (Expects Hex Text)
 - SMRT: URL Quote
 - SMRT: URL Unquote
 - SMRT: NBO Int to IP
