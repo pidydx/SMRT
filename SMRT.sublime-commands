@@ -201,5 +201,9 @@
     {
         "caption": "SMRT: Alpha to Int",
         "command": "alpha_to_int",
+    },
+    {
+        "caption": "SMRT: Find PE",
+        "command": "find_pe",
     }
 ]

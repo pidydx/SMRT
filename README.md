@@ -52,6 +52,7 @@ Windows: https://github.com/pidydx/libmagicwin64
 - SMRT: IP to HBO Int
 - SMRT: Switch Endianness (Expects Hex Text)
 - SMRT: PE Scanner (Expects Hex Text)
+- SMRT: Find PE (Expects Hex Text)
 - SMRT: Apply XOR (Prompts for hex key or range. Examples: FF, 00-FF, DEAD, 0000-FFFF)
 - SMRT: Apply XOR Skip Zero and Key (Prompts for hex key or range. Examples: FF, 00-FF, DEAD, 0000-FFFF)
 - SMRT: Binary Text to Hex (Expects string of 1's and 0's)
@@ -60,7 +61,6 @@ Windows: https://github.com/pidydx/libmagicwin64
 
 ## Coming Soon
 
-- Find PE in Hex
 - Brute Force XOR Find PE in Hex
 - Custom BaseXX Encode/Decodes
 - Hex Math (ADD,SUB,NEG,INV,ROR,ROL)

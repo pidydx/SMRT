@@ -44,24 +44,17 @@ def ParseHex(hextext):
         return None
 
 
-def FormatHex(hextext, bytes=1, newlines=True):
-    step = bytes * 2
+def FormatHex(hextext, byte_len=1, newlines=True):
+    step = byte_len * 2
     formathex = ""
 
     if not re.search('^[0-9A-F]+$', hextext):
         hextext = ParseHex(hextext)
-
-    if hextext is not None:
-        for i in range(0, len(hextext), step):
-            formathex += hextext[i:i+step]
-            if len(hextext[:i+step]) % 32 == 0 and newlines:
-                formathex += "\n"
-            else:
-                formathex += " "
-
-        return formathex.upper().rstrip()
-    else:
-        return None
+    formathex = []
+    hexarray = [hextext[n:n + 32] for n in range(0, len(hextext), 32)]
+    for line in hexarray:
+        formathex.append(' '.join([line[n:n + step] for n in range(0, len(line), step)]))
+    return '\n'.join(formathex)
 
 
 def XorData(hextext, xor, skip_zero_and_key):
@@ -394,6 +387,25 @@ class PeScannerCommand(sublime_plugin.TextCommand):
                 report_file = self.view.window().new_file()
                 report_file.set_name("PE Scanner Report")
                 report_file.insert(edit, 0, '\n'.join(pehex.collect()))
+
+
+class FindPeCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        window = self.view.window()
+        for sel in self.view.sel():
+            hextext = ParseHex(self.view.substr(sel))
+            for i in range(0, len(hextext)):
+                if len(hextext[i:]) > 128:
+                    if hextext[i:i+4] == '4D5A':
+                        pe_offset_bytes = hextext[i+120:i+120+8]
+                        pe_offset_bytesarray = list(reversed([pe_offset_bytes[n:n+2] for n in range(0, len(pe_offset_bytes), 2)]))
+                        pe_offset = int(''.join(pe_offset_bytesarray), 16) *2
+                        if len(hextext[i:]) > pe_offset + 4:
+                            if hextext[i+pe_offset:i+pe_offset+4] == '5045':
+                                pe_hextext = hextext[i:]
+                                output_file = window.new_file()
+                                output_file.set_name("OFFSET: %s" % i)
+                                output_file.insert(edit, 0, FormatHex(pe_hextext))
 
 
 class GetTextRotValue(sublime_plugin.WindowCommand):
