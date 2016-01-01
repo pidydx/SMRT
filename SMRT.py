@@ -26,6 +26,7 @@ import zlib
 import urllib.parse
 import socket
 import struct
+import math
 from SMRT.pescanner import pescanner
 
 
@@ -57,21 +58,23 @@ def FormatHex(hextext, byte_len=1, newlines=True):
     return '\n'.join(formathex)
 
 
-def XorData(hextext, xor, skip_zero_and_key):
-    xorlen = len(xor)
-    xorbyte = int(xor, 16)
-    xortext = ''
-    chunks, chunk_size = len(hextext), xorlen
-    bytearray = [hextext[i:i+chunk_size] for i in range(0, chunks, chunk_size)]
-    for bytechunk in bytearray:
-        if skip_zero_and_key:
-            if int(bytechunk, 16) == xorbyte or int(bytechunk, 16) == 0:
-                xortext += bytechunk.lower()
+def XorData(hextext, xor_key, skip_zero_and_key=False):
+    xor_len = len(xor_key)
+    xor_bytes = [int(xor_key[n:n+2], 16) for n in range(0, xor_len, 2)] * int(math.ceil(len(hextext)/len(xor_key)))
+    data_hex = [hextext[n:n+2] for n in range(0, len(hextext), 2)]
+    xor_text = ''
+
+    for (xor_byte, data) in zip(xor_bytes, data_hex):
+        if data:
+            data_byte = int(data, 16)
+            if skip_zero_and_key:
+                if data_byte == xor_byte or data_byte == 0:
+                    xor_text += "{0:0{1}x}".format(data_byte, 2)
+                else:
+                    xor_text += "{0:0{1}x}".format(data_byte ^ xor_byte, 2)
             else:
-                xortext += "{0:0{1}x}".format((int(bytechunk, 16) ^ xorbyte), len(bytechunk))
-        else:
-            xortext += "{0:0{1}x}".format((int(bytechunk, 16) ^ xorbyte), len(bytechunk))
-    return xortext
+                xor_text += "{0:0{1}x}".format(data_byte ^ xor_byte, 2)
+    return xor_text
 
 
 class BintxtToHexCommand(sublime_plugin.TextCommand):
@@ -394,18 +397,56 @@ class FindPeCommand(sublime_plugin.TextCommand):
         window = self.view.window()
         for sel in self.view.sel():
             hextext = ParseHex(self.view.substr(sel))
-            for i in range(0, len(hextext)):
-                if len(hextext[i:]) > 128:
+            hextext_len = len(hextext)
+            for i in range(0, hextext_len):
+                if hextext_len - i > 128:
                     if hextext[i:i+4] == '4D5A':
                         pe_offset_bytes = hextext[i+120:i+120+8]
                         pe_offset_bytesarray = list(reversed([pe_offset_bytes[n:n+2] for n in range(0, len(pe_offset_bytes), 2)]))
-                        pe_offset = int(''.join(pe_offset_bytesarray), 16) *2
-                        if len(hextext[i:]) > pe_offset + 4:
+                        pe_offset = int(''.join(pe_offset_bytesarray), 16) * 2
+                        if hextext_len - i > pe_offset + 4:
                             if hextext[i+pe_offset:i+pe_offset+4] == '5045':
                                 pe_hextext = hextext[i:]
                                 output_file = window.new_file()
                                 output_file.set_name("OFFSET: %s" % i)
                                 output_file.insert(edit, 0, FormatHex(pe_hextext))
+
+
+class BruteXorFindPeCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        window = self.view.window()
+        for sel in self.view.sel():
+            hextext = ParseHex(self.view.substr(sel))
+            hextext_len = len(hextext)
+            for i in range(0, hextext_len):
+                if hextext_len - i > 128:
+                    alt_key = ''
+                    xor_key = XorData(hextext[i:i+4], '4d5a')
+
+                    if xor_key == '004d':
+                        alt_key = '4d'
+
+                    if xor_key == '5a00':
+                        alt_key = '5a'
+
+                    pe_offset_bytes = hextext[i+120:i+120+8]
+
+                    def check_target(xor_key, skip_zero_and_key=False):
+                        pe_target = XorData(pe_offset_bytes, xor_key, skip_zero_and_key)
+                        pe_offset_bytesarray = list(reversed([pe_target[n:n+2] for n in range(0, len(pe_target), 2)]))
+                        pe_offset = int(''.join(pe_offset_bytesarray), 16) * 2
+                        if hextext_len - i > pe_offset + 4:
+                             if XorData(hextext[i+pe_offset:i+pe_offset+4], xor_key, skip_zero_and_key) == '5045':
+                                  pe_hextext = XorData(hextext[i:], xor_key, skip_zero_and_key)
+                                  output_file = window.new_file()
+                                  output_file.set_name("Offset: %i  Key: %s Skips zero and keys: %s" % (i, xor_key, skip_zero_and_key))
+                                  output_file.insert(edit, 0, FormatHex(pe_hextext))
+
+                    check_target(xor_key)
+                    check_target(xor_key, skip_zero_and_key=True)
+
+                    if alt_key:
+                        check_target(alt_key, skip_zero_and_key=True)
 
 
 class GetTextRotValue(sublime_plugin.WindowCommand):
@@ -447,7 +488,7 @@ class ApplyXorCommand(sublime_plugin.TextCommand):
         for sel in self.view.sel():
             if not sel.empty():
                 hextext = ParseHex(self.view.substr(sel))
-                if hextext is not None and (len(hextext) % len(xor) == 0):
+                if hextext is not None:
                     xor_hextext = XorData(hextext, xor, skip_zero_and_key)
                     formathex = FormatHex(xor_hextext)
                     self.view.replace(edit, sel, formathex)
@@ -470,7 +511,7 @@ class ApplyXorRangeCommand(sublime_plugin.TextCommand):
             for sel in self.view.sel():
                 if not sel.empty():
                     hextext = ParseHex(self.view.substr(sel))
-                    if hextext is not None and (len(hextext) % len(first_byte) == 0):
+                    if hextext is not None:
                         for byte in byte_range:
                             xor = "%X" % byte
                             xor = xor.zfill(len(first_byte))

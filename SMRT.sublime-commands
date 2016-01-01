@@ -205,5 +205,9 @@
     {
         "caption": "SMRT: Find PE",
         "command": "find_pe",
+    },
+    {
+        "caption": "SMRT: Brute XOR Find PE",
+        "command": "brute_xor_find_pe",
     }
 ]
