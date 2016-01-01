@@ -53,15 +53,16 @@ Windows: https://github.com/pidydx/libmagicwin64
 - SMRT: Switch Endianness (Expects Hex Text)
 - SMRT: PE Scanner (Expects Hex Text)
 - SMRT: Find PE (Expects Hex Text)
+- SMRT: Brute XOR Find PE (This can take some time and Sublime will appear to be unresponsive while running)
 - SMRT: Apply XOR (Prompts for hex key or range. Examples: FF, 00-FF, DEAD, 0000-FFFF)
 - SMRT: Apply XOR Skip Zero and Key (Prompts for hex key or range. Examples: FF, 00-FF, DEAD, 0000-FFFF)
 - SMRT: Binary Text to Hex (Expects string of 1's and 0's)
 - SMRT: Int to Alpha (Converts 1->A, 2->B, 3->C, etc. Expects ints 1-26 separated by spaces)
 - SMRT: Alpha to Int (Converts Aa->1, Bb->2, Cc->3, etc. Expects upper/lower alpha a-z)
 
+
 ## Coming Soon
 
-- Brute Force XOR Find PE in Hex
 - Custom BaseXX Encode/Decodes
 - Hex Math (ADD,SUB,NEG,INV,ROR,ROL)
 - Int Math (ADD,SUB,MULT,DIV)
