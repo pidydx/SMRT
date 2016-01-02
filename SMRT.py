@@ -308,7 +308,7 @@ class BaseXxDecodeCommand(sublime_plugin.TextCommand):
                 self.view.replace(edit, sel, text.decode('utf-8'))
 
 
-class BaseXxEncodeBinaryCommand(sublime_plugin.TextCommand):
+class BaseXxEncodeHexCommand(sublime_plugin.TextCommand):
     def run(self, edit, xx=64, table=None):
         for sel in self.view.sel():
             if not sel.empty():
@@ -320,7 +320,7 @@ class BaseXxEncodeBinaryCommand(sublime_plugin.TextCommand):
                 self.view.replace(edit, sel, bxxtext.decode('utf-8'))
 
 
-class BaseXxDecodeBinaryCommand(sublime_plugin.TextCommand):
+class BaseXxDecodeHexCommand(sublime_plugin.TextCommand):
     def run(self, edit, xx=64, table=None):
         for sel in self.view.sel():
             if not sel.empty():
@@ -329,7 +329,6 @@ class BaseXxDecodeBinaryCommand(sublime_plugin.TextCommand):
                 formathex = "*No Decoding Selected*"
                 if xx == 64:
                     data = binascii.a2b_base64(bxxtext)
-                    print(data)
                     hextext = binascii.hexlify(data)
                     formathex = FormatHex(hextext.decode('utf-8'))
                 self.view.replace(edit, sel, formathex)
@@ -342,7 +341,7 @@ class TextTranslateCommand(sublime_plugin.TextCommand):
         for sel in self.view.sel():
             if not sel.empty():
                 text = self.view.substr(sel)
-                rottext = str(text).translate(rottrans)
+                rottext = text.translate(rottrans)
                 self.view.replace(edit, sel, rottext)
 
 

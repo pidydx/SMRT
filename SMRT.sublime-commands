@@ -5,32 +5,32 @@
         "args": { "format": "Unix" }
     },
     {
-        "caption": "SMRT: Base64 Encode",
+        "caption": "SMRT: UTF-8 To Base64",
         "command": "base_xx_encode",
         "args": { "xx": 64 }
     },
     {
-        "caption": "SMRT: Base32 Encode",
+        "caption": "SMRT: UTF-8 To Base32",
         "command": "base_xx_encode",
         "args": { "xx": 32 }
     },
     {
-        "caption": "SMRT: Base64 Decode",
+        "caption": "SMRT: Base64 To UTF-8",
         "command": "base_xx_decode",
         "args": { "xx": 64 }
     },
     {
-        "caption": "SMRT: Base32 Decode",
+        "caption": "SMRT: Base32 To UTF-8",
         "command": "base_xx_decode",
         "args": { "xx": 32 }
     },
     {
-        "caption": "SMRT: Rot13 Encode",
+        "caption": "SMRT: Rot13 Encode Text",
         "command": "text_translate",
         "args": { "rot": 26 }
     },
     {
-        "caption": "SMRT: RotX Encode",
+        "caption": "SMRT: RotX Encode Text",
         "command": "get_text_rot_value"
     },
     {
@@ -38,17 +38,17 @@
         "command": "get_swap_map"
     },
     {
-        "caption": "SMRT: MD5",
+        "caption": "SMRT: UTF-8 To MD5",
         "command": "hash",
         "args": { "alg": "md5" }
     },
     {
-        "caption": "SMRT: SHA1",
+        "caption": "SMRT: UTF-8 To SHA1",
         "command": "hash",
         "args": { "alg": "sha1" }
     },
     {
-        "caption": "SMRT: SHA256",
+        "caption": "SMRT: UTF-8 To SHA256",
         "command": "hash",
         "args": { "alg": "sha256" }
     },
@@ -76,72 +76,72 @@
         "args": { "bytes": 4}
     },
     {
-        "caption": "SMRT: Base64 Encode Binary",
-        "command": "base_xx_encode_binary",
+        "caption": "SMRT: Hex To Base64",
+        "command": "base_xx_encode_hex",
         "args": { "xx": 64 }
     },
     {
-        "caption": "SMRT: Base64 Decode Binary",
-        "command": "base_xx_decode_binary",
+        "caption": "SMRT: Base64 To Hex",
+        "command": "base_xx_decode_hex",
         "args": { "xx": 64 }
     },
     {
-        "caption": "SMRT: Hex Encode ASCII",
+        "caption": "SMRT: ASCII To Hex",
         "command": "hex_encode",
         "args": { "encoding": "ascii "}
     },
     {
-        "caption": "SMRT: Hex Encode UTF-8",
+        "caption": "SMRT: UTF-8 To Hex",
         "command": "hex_encode",
         "args": { "encoding": "utf-8"}
     },
     {
-        "caption": "SMRT: Hex Encode UTF-16",
+        "caption": "SMRT: UTF-16 To Hex",
         "command": "hex_encode",
         "args": { "encoding": "utf-16 "}
     },
     {
-        "caption": "SMRT: Hex Decode ASCII",
+        "caption": "SMRT: Hex To ASCII",
         "command": "hex_decode",
         "args": { "encoding": "ascii "}
     },
     {
-        "caption": "SMRT: Hex Decode UTF-8",
+        "caption": "SMRT: Hex To UTF-8",
         "command": "hex_decode",
         "args": { "encoding": "utf-8 "}
     },
     {
-        "caption": "SMRT: Hex Decode UTF-16",
+        "caption": "SMRT: Hex To UTF-16",
         "command": "hex_decode",
         "args": { "encoding": "utf-16"}
     },
     {
-        "caption": "SMRT: Zlib Decompress Binary",
+        "caption": "SMRT: Zlib Decompress Hex",
         "command": "zlib_decompress",
         "args": { "wbits": 15 }
     },
     {
-        "caption": "SMRT: Zlib Compress Binary",
+        "caption": "SMRT: Zlib Compress Hex",
         "command": "compress",
         "args": { "cformat": "zlib" }
     },
     {
-        "caption": "SMRT: INFLATE Decompress Binary",
+        "caption": "SMRT: INFLATE Decompress Hex",
         "command": "zlib_decompress",
         "args": { "wbits": -15 }
     },
     {
-        "caption": "SMRT: DEFLATE Compress Binary",
+        "caption": "SMRT: DEFLATE Compress Hex",
         "command": "compress",
         "args": { "cformat": "deflate" }
     },
     {
-        "caption": "SMRT: Gzip Decompress Binary",
+        "caption": "SMRT: Gzip Decompress Hex",
         "command": "zlib_decompress",
         "args": { "wbits": 31 }
     },
     {
-        "caption": "SMRT: Gzip Compress Binary",
+        "caption": "SMRT: Gzip Compress Hex",
         "command": "compress",
         "args": { "cformat": "gzip" }
     },
@@ -154,22 +154,22 @@
         "command": "url_unquote"
     },
     {
-        "caption": "SMRT: NBO Int to IP",
+        "caption": "SMRT: NBO Int To IP",
         "command": "int_to_ip",
         "args": { "order": "N"}
     },
     {
-        "caption": "SMRT: HBO Int to IP",
+        "caption": "SMRT: HBO Int To IP",
         "command": "int_to_ip",
         "args": { "order": "H"}
     },
     {
-        "caption": "SMRT: IP to NBO Int",
+        "caption": "SMRT: IP To NBO Int",
         "command": "ip_to_int",
         "args": { "order": "N"}
     },
     {
-        "caption": "SMRT: IP to HBO Int",
+        "caption": "SMRT: IP To HBO Int",
         "command": "ip_to_int",
         "args": { "order": "H"}
     },
@@ -199,11 +199,11 @@
         "command": "hex_to_binary",
     },
     {
-        "caption": "SMRT: Int to Alpha",
+        "caption": "SMRT: Int To Alpha",
         "command": "int_to_alpha",
     },
     {
-        "caption": "SMRT: Alpha to Int",
+        "caption": "SMRT: Alpha To Int",
         "command": "alpha_to_int",
     },
     {

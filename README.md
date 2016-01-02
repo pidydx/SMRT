@@ -5,59 +5,59 @@ This is a Plugin for Sublime Text 3 to provide a number of commonly used tools r
 Recommended installation is to git clone into the Packages directory of Sublime Text 3
 
 ## Prerequisites
-You must have libmagic installed for the PE related functions.
+You must have libmagic installed or SMRT will fail to load.
 
 Examples:
 
-OSX: `brew install libmagic`
+OSX (using Homebrew): `brew install libmagic`
 
 Windows: https://github.com/pidydx/libmagicwin64
 
 ## Current Commands
-- SMRT: Unix Timestamp From Int
+- SMRT: Int To Unix Timestamp 
 - SMRT: Base64 Encode
 - SMRT: Base32 Encode
 - SMRT: Base64 Decode
 - SMRT: Base32 Decode
 - SMRT: Rot13 Encode
 - SMRT: RotX Encode (Prompts for integer distance to rotate text)
-- SMRT: Swap Char (prompts for substitution map in Xx:Yy format)
-- SMRT: MD5
-- SMRT: SHA1
-- SMRT: SHA256
-- SMRT: Hex to Int 
-- SMRT: Int to Hex
+- SMRT: Swap Char (Prompts for substitution map in Xx:Yy format)
+- SMRT: UTF-8 To MD5
+- SMRT: UTF-8 To SHA1
+- SMRT: UTF-8 To SHA256
+- SMRT: Hex To Int 
+- SMRT: Int To Hex
 - SMRT: Byte Format Hex
 - SMRT: Word Format Hex
 - SMRT: DWord Format Hex
 - SMRT: Base64 Encode Binary
 - SMRT: Base64 Decode Binary
-- SMRT: Hex Encode ASCII
-- SMRT: Hex Encode UTF-8
-- SMRT: Hex Encode UTF-16
-- SMRT: Hex Decode ASCII
-- SMRT: Hex Decode UTF-8
-- SMRT: Hex Decode UTF-16
-- SMRT: Zlib Decompress Binary (Expects Hex Text)
-- SMRT: Zlib Compress Binary (Expects Hex Text)
-- SMRT: Gzip Decompress Binary (Expects Hex Text)
-- SMRT: Gzip Compress Binary (Expects Hex Text)
-- SMRT: INFLATE Decompress Binary (Expects Hex Text)
-- SMRT: DEFLATE Compress Binary (Expects Hex Text)
+- SMRT: ASCII To Hex
+- SMRT: UTF-8 To Hex
+- SMRT: UTF-16 To Hex
+- SMRT: Hex To ASCII
+- SMRT: Hex To UTF-8
+- SMRT: Hex To UTF-16
+- SMRT: Binary To Hex (Expects string of 1's and 0's)
+- SMRT: Hex to Binary 
+- SMRT: Zlib Decompress Hex
+- SMRT: Zlib Compress Hex
+- SMRT: Gzip Decompress Hex
+- SMRT: Gzip Compress Hex
+- SMRT: INFLATE Decompress Hex
+- SMRT: DEFLATE Compress Hex
 - SMRT: URL Quote
 - SMRT: URL Unquote
-- SMRT: NBO Int to IP
-- SMRT: HBO Int to IP
-- SMRT: IP to NBO Int
-- SMRT: IP to HBO Int
+- SMRT: NBO Int To IP
+- SMRT: HBO Int To IP
+- SMRT: IP To NBO Int
+- SMRT: IP To HBO Int
 - SMRT: Switch Endianness (Expects Hex Text)
 - SMRT: PE Scanner (Expects Hex Text)
 - SMRT: Find PE (Expects Hex Text)
-- SMRT: Brute XOR Find PE (This can take some time and Sublime will appear to be unresponsive while running)
+- SMRT: Brute XOR Find PE (Expects Hex Text. This can take some time and Sublime will appear to be unresponsive while running)
 - SMRT: Apply XOR (Prompts for hex key or range. Examples: FF, 00-FF, DEAD, 0000-FFFF)
 - SMRT: Apply XOR Skip Zero and Key (Prompts for hex key or range. Examples: FF, 00-FF, DEAD, 0000-FFFF)
-- SMRT: Binary Text to Hex (Expects string of 1's and 0's)
-- SMRT: Hex to Binary Text
 - SMRT: Int to Alpha (Converts 1->A, 2->B, 3->C, etc. Expects ints 1-26 separated by spaces)
 - SMRT: Alpha to Int (Converts Aa->1, Bb->2, Cc->3, etc. Expects upper/lower alpha a-z)
 
@@ -69,4 +69,3 @@ Windows: https://github.com/pidydx/libmagicwin64
 - Int Math (ADD,SUB,MULT,DIV)
 - Mail Extraction
 - Strings on PE
-- Magic on data
