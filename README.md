@@ -62,11 +62,13 @@ Windows: https://github.com/pidydx/libmagicwin64
 - SMRT: Alpha to Int (Converts Aa->1, Bb->2, Cc->3, etc. Expects upper/lower alpha a-z)
 - SMRT: Code Point to Unicode (Expects code point representation. Examples: U+XXXX, %uXXXX, \uXXXX)
 - SMRT: Unicode to Code Point
+- SMRT: Hex Bitwise ROL (Prompts for number of bytes to include in rotation and number of bits to rotatein x,y format)
+- SMRT: Hex Bitwise ROR (Prompts for number of bytes to include in rotation and number of bits to rotatein x,y format)
 
 ## Coming Soon
 
 - Custom BaseXX Encode/Decodes
-- Hex Math (ADD,SUB,NEG,INV,ROR,ROL)
-- Int Math (ADD,SUB,MULT,DIV)
+- Bit Operations (NEG,INV)
 - Mail Extraction
 - Strings on PE
+- Mach-o, ELF features

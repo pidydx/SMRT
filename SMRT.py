@@ -581,18 +581,52 @@ class ApplyXorRangeCommand(sublime_plugin.TextCommand):
             self.view.replace(edit, sel, "*Start and End byte length mismatch*")
 
 
+class BitRotateCommand(sublime_plugin.TextCommand):
+    def run(self, edit, group_len, bits, direction):
+        for sel in self.view.sel():
+            hextext = ParseHex(self.view.substr(sel))
+            if hextext is not None:
+                hextext_len = len(hextext)
+                hexgroup_len = group_len * 2
+                bit_len = group_len * 8
+                bits = bits % bit_len
+                rottext = ''
+
+                if hextext_len % hexgroup_len == 0:
+                    byte_groups = [int(hextext[i:i+hexgroup_len], 16) for i in range(0, hextext_len, hexgroup_len)]
+                    for byte_group in byte_groups:
+                        bit_mask = 2 ** bit_len - 1
+                        if direction == 'ROL':
+                            rot_byte_group = ((byte_group << bits) | byte_group >> (bit_len - bits)) & bit_mask
+                        else:
+                            rot_byte_group = ((byte_group >> bits) | byte_group << (bit_len - bits)) & bit_mask
+                        rottext += "{0:0{1}x}".format(rot_byte_group, hexgroup_len)
+                    self.view.replace(edit, sel, FormatHex(rottext))
+                else:
+                    self.view.replace(edit, sel, "*Selected Hex cannot be grouped by %s bytes*" % group_len)
+
+
 class GetXorKeys(sublime_plugin.WindowCommand):
     def run(self, skip_zero_and_key=False):
         self.skip_zero_and_key = skip_zero_and_key
         self.window.show_input_panel('XOR Bytes', '', self.on_done, None, None)
 
     def on_done(self, xor):
-        try:
-            if re.search('^([A-F0-9]{2})+$', xor.upper()):
-                if self.window.active_view():
-                    self.window.active_view().run_command("apply_xor", {"xor": xor, "skip_zero_and_key": self.skip_zero_and_key})
-            elif re.search('^([A-F0-9]{2})+-([A-F0-9]{2})+$', xor.upper()):
-                if self.window.active_view():
-                    self.window.active_view().run_command("apply_xor_range", {"xor_range": xor, "skip_zero_and_key": self.skip_zero_and_key})
-        except ValueError:
-            pass
+        if re.search('^([A-F0-9]{2})+$', xor.upper()):
+            if self.window.active_view():
+                self.window.active_view().run_command("apply_xor", {"xor": xor, "skip_zero_and_key": self.skip_zero_and_key})
+        elif re.search('^([A-F0-9]{2})+-([A-F0-9]{2})+$', xor.upper()):
+            if self.window.active_view():
+                self.window.active_view().run_command("apply_xor_range", {"xor_range": xor, "skip_zero_and_key": self.skip_zero_and_key})
+
+
+class GetRotateArgs(sublime_plugin.WindowCommand):
+    def run(self, direction):
+        self.direction = direction
+        self.window.show_input_panel('Byte Group Length,Bit Shift', '', self.on_done, None, None)
+
+    def on_done(self, args):
+        if re.search('^[0-9]+,[0-9]+$', args):
+            group_len, bits = args.split(',')
+            if self.window.active_view():
+                self.window.active_view().run_command("bit_rotate", {"group_len": int(group_len), "bits": int(bits), "direction": self.direction} )

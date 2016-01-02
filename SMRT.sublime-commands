@@ -192,34 +192,44 @@
     },
     {
         "caption": "SMRT: Binary to Hex",
-        "command": "binary_to_hex",
+        "command": "binary_to_hex"
     },
     {
         "caption": "SMRT: Hex to Binary",
-        "command": "hex_to_binary",
+        "command": "hex_to_binary"
     },
     {
         "caption": "SMRT: Int To Alpha",
-        "command": "int_to_alpha",
+        "command": "int_to_alpha"
     },
     {
         "caption": "SMRT: Alpha To Int",
-        "command": "alpha_to_int",
+        "command": "alpha_to_int"
     },
     {
         "caption": "SMRT: Find PE",
-        "command": "find_pe",
+        "command": "find_pe"
     },
     {
         "caption": "SMRT: Brute XOR Find PE",
-        "command": "brute_xor_find_pe",
+        "command": "brute_xor_find_pe"
     },
     {
         "caption": "SMRT: Code Point To Unicode",
-        "command": "codepoint_to_unicode",
+        "command": "codepoint_to_unicode"
     },
     {
         "caption": "SMRT: Unicode To Code Point",
-        "command": "unicode_to_codepoint",
+        "command": "unicode_to_codepoint"
     },
+    {
+        "caption": "SMRT: Hex Bitwise ROR",
+        "command": "get_rotate_args",
+        "args": { "direction": "ROR" }
+    },
+    {
+        "caption": "SMRT: Hex Bitwise ROL",
+        "command": "get_rotate_args",
+        "args": { "direction": "ROL" }
+    }
 ]
