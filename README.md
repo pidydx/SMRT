@@ -1,4 +1,5 @@
-Sublime Malware Research Tool
+Sublime Malware Research Tool 
+*** This branch is no longer under active development and this project has been converted for use with Sublime Text 3 ***
 
 This is a Plugin for Sublime Text 2 to provide a number of commonly used tools related to malware analysis and research.
 
@@ -37,14 +38,3 @@ SMRT: IP to NBO Int
 SMRT: IP to HBO Int
 SMRT: Switch Endianness
 SMRT: PE Scanner
-
-Coming Soon
-
-
-XOR Transforms (with 00 skips)
-Find PE in Hex
-Brute Force XOR Find PE in Hex
-Custom BaseXX Encode/Decodes
-Hex Math (ADD,SUB,NEG,INV,ROR,ROL)
-Int Math (ADD,SUB,MULT,DIV)
-Mail Extraction
