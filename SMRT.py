@@ -34,7 +34,7 @@ def ParseHex(hextext):
     if re.search(r'^([xX][0-9A-F]{2})+$', hextext):
         hextext = re.sub(r'x', '', hextext)
     else:
-        hextext = re.sub(r'(0[xX]|\\[xX]|\\[uU]|%[uU]|%|\s)',
+        hextext = re.sub(r'(0[xX]|\\[xX]|\\[uU]|%[uU]|[uU]\+|%|\s)',
                          '', hextext).upper()
 
     if re.search('^[0-9A-F]+$', hextext):
@@ -69,25 +69,41 @@ def XorData(hextext, xor_key, skip_zero_and_key=False):
             data_byte = int(data, 16)
             if skip_zero_and_key:
                 if data_byte == xor_byte or data_byte == 0:
-                    xor_text += "{0:0{1}x}".format(data_byte, 2)
+                    xor_text += '{0:0{1}x}'.format(data_byte, 2)
                 else:
-                    xor_text += "{0:0{1}x}".format(data_byte ^ xor_byte, 2)
+                    xor_text += '{0:0{1}x}'.format(data_byte ^ xor_byte, 2)
             else:
                 xor_text += "{0:0{1}x}".format(data_byte ^ xor_byte, 2)
     return xor_text
 
 
-class BintxtToHexCommand(sublime_plugin.TextCommand):
+class BinaryToHexCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         for sel in self.view.sel():
             if not sel.empty():
-                bintxttext = self.view.substr(sel)
-                bintxttext = re.sub(r'\s', '', bintxttext)
-                if re.search('[01]+$', bintxttext):
-                    hextext = FormatHex("%x" % (int(bintxttext, 2)))
-                    self.view.replace(edit, sel, hextext)
+                bintext = self.view.substr(sel)
+                bintext = re.sub(r'\s', '', bintext)
+                if re.search('[01]+$', bintext):
+                    hextext = '{0:0{1}x}'.format(int(bintext, 2), 2)
+                    formathex = FormatHex(ParseHex(hextext))
+                    self.view.replace(edit, sel, formathex)
                 else:
                     self.view.replace(edit, sel, "*Non-binary text Input: 1's and 0's expected *")
+
+
+class HexToBinaryCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        for sel in self.view.sel():
+            if not sel.empty():
+                hextext = ParseHex(self.view.substr(sel))
+                if hextext is not None:
+                    binint = int(hextext, 16)
+                    num_bytes = int(len(hextext)/2)
+                    bintext = '{0:0{1}b}'.format(binint, 8 * num_bytes)
+                    formattext = ' '.join(bintext[i:i+8] for i in range(0, len(bintext), 8))
+                    self.view.replace(edit, sel, formattext)
+                else:
+                    self.view.replace(edit, sel, "*Non-hex Input: \\xFF\\xFF xFFxFF %FF%FF \\uFFFF %uFFFF FFFF 0xFFFF expected*")
 
 
 class IntToAlpha(sublime_plugin.TextCommand):

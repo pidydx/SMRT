@@ -192,7 +192,11 @@
     },
     {
         "caption": "SMRT: Binary Text to Hex",
-        "command": "bintxt_to_hex",
+        "command": "binary_to_hex",
+    },
+    {
+        "caption": "SMRT: Hex to Binary Text",
+        "command": "hex_to_binary",
     },
     {
         "caption": "SMRT: Int to Alpha",

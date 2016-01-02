@@ -57,6 +57,7 @@ Windows: https://github.com/pidydx/libmagicwin64
 - SMRT: Apply XOR (Prompts for hex key or range. Examples: FF, 00-FF, DEAD, 0000-FFFF)
 - SMRT: Apply XOR Skip Zero and Key (Prompts for hex key or range. Examples: FF, 00-FF, DEAD, 0000-FFFF)
 - SMRT: Binary Text to Hex (Expects string of 1's and 0's)
+- SMRT: Hex to Binary Text
 - SMRT: Int to Alpha (Converts 1->A, 2->B, 3->C, etc. Expects ints 1-26 separated by spaces)
 - SMRT: Alpha to Int (Converts Aa->1, Bb->2, Cc->3, etc. Expects upper/lower alpha a-z)
 
