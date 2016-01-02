@@ -34,7 +34,7 @@ def ParseHex(hextext):
     if re.search(r'^([xX][0-9A-F]{2})+$', hextext):
         hextext = re.sub(r'x', '', hextext)
     else:
-        hextext = re.sub(r'(0[xX]|\\[xX]|\\[uU]|%[uU]|[uU]\+|%|\s)',
+        hextext = re.sub(r'(0[xX]|\\[xX]|%|\s)',
                          '', hextext).upper()
 
     if re.search('^[0-9A-F]+$', hextext):
@@ -43,6 +43,15 @@ def ParseHex(hextext):
         return hextext
     else:
         return None
+
+
+def ParseCodePoint(codepoint):
+    hexarray = re.sub(r'(\\[uU]|%[uU]|[uU]\+|%|\s+)', ' ', codepoint).split()
+    try:
+        intarray = [int(u, 16) for u in hexarray]
+    except ValueError:
+        return None
+    return intarray
 
 
 def FormatHex(hextext, byte_len=1, newlines=True):
@@ -267,7 +276,7 @@ class HexDecodeCommand(sublime_plugin.TextCommand):
 
 
 class FormatHexCommand(sublime_plugin.TextCommand):
-    def run (self, edit, bytes):
+    def run(self, edit, bytes):
         for sel in self.view.sel():
             if not sel.empty():
                 hextext = ParseHex(self.view.substr(sel))
@@ -451,17 +460,46 @@ class BruteXorFindPeCommand(sublime_plugin.TextCommand):
                         pe_offset_bytesarray = list(reversed([pe_target[n:n+2] for n in range(0, len(pe_target), 2)]))
                         pe_offset = int(''.join(pe_offset_bytesarray), 16) * 2
                         if hextext_len - i > pe_offset + 4:
-                             if XorData(hextext[i+pe_offset:i+pe_offset+4], xor_key, skip_zero_and_key) == '5045':
-                                  pe_hextext = XorData(hextext[i:], xor_key, skip_zero_and_key)
-                                  output_file = window.new_file()
-                                  output_file.set_name("Offset: %i  Key: %s Skips zero and keys: %s" % (i, xor_key, skip_zero_and_key))
-                                  output_file.insert(edit, 0, FormatHex(pe_hextext))
+                            if XorData(hextext[i+pe_offset:i+pe_offset+4], xor_key, skip_zero_and_key) == '5045':
+                                pe_hextext = XorData(hextext[i:], xor_key, skip_zero_and_key)
+                                output_file = window.new_file()
+                                output_file.set_name("Offset: %i  Key: %s Skips zero and keys: %s" % (i, xor_key, skip_zero_and_key))
+                                output_file.insert(edit, 0, FormatHex(pe_hextext))
 
                     check_target(xor_key)
                     check_target(xor_key, skip_zero_and_key=True)
 
                     if alt_key:
                         check_target(alt_key, skip_zero_and_key=True)
+
+
+class CodepointToUnicode(sublime_plugin.TextCommand):
+    def run(self, edit):
+        for sel in self.view.sel():
+            if not sel.empty():
+                unicodetext = []
+                intarray = ParseCodePoint(self.view.substr(sel))
+                if intarray is not None:
+                    for element in intarray:
+                        try:
+                            char = chr(element)
+                            unicodetext.append(char)
+                        except OverflowError:
+                            unicodetext.append('%s' % element)
+                    self.view.replace(edit, sel, ''.join(unicodetext))
+            else:
+                self.view.replace(edit, sel, "*Non-Codepoint Input: \\uFFFF %uFFFF U+FFFF expected*")
+
+
+class UnicodeToCodepoint(sublime_plugin.TextCommand):
+    def run(self, edit):
+        for sel in self.view.sel():
+            if not sel.empty():
+                codepointtext = []
+                text = self.view.substr(sel)
+                for char in text:
+                    codepointtext.append('U+{0:0{1}x}'.format(ord(char), 4))
+                self.view.replace(edit, sel, ' '.join(codepointtext))
 
 
 class GetTextRotValue(sublime_plugin.WindowCommand):

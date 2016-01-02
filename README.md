@@ -15,10 +15,10 @@ Windows: https://github.com/pidydx/libmagicwin64
 
 ## Current Commands
 - SMRT: Int To Unix Timestamp 
-- SMRT: Base64 Encode
-- SMRT: Base32 Encode
-- SMRT: Base64 Decode
-- SMRT: Base32 Decode
+- SMRT: UTF-8 To Base64
+- SMRT: UTF-8 To Base32
+- SMRT: Base64 To UTF-8
+- SMRT: Base32 To UTF-8
 - SMRT: Rot13 Encode
 - SMRT: RotX Encode (Prompts for integer distance to rotate text)
 - SMRT: Swap Char (Prompts for substitution map in Xx:Yy format)
@@ -60,7 +60,8 @@ Windows: https://github.com/pidydx/libmagicwin64
 - SMRT: Apply XOR Skip Zero and Key (Prompts for hex key or range. Examples: FF, 00-FF, DEAD, 0000-FFFF)
 - SMRT: Int to Alpha (Converts 1->A, 2->B, 3->C, etc. Expects ints 1-26 separated by spaces)
 - SMRT: Alpha to Int (Converts Aa->1, Bb->2, Cc->3, etc. Expects upper/lower alpha a-z)
-
+- SMRT: Code Point to Unicode (Expects code point representation. Examples: U+XXXX, %uXXXX, \uXXXX)
+- SMRT: Unicode to Code Point
 
 ## Coming Soon
 

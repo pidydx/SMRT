@@ -213,5 +213,13 @@
     {
         "caption": "SMRT: Brute XOR Find PE",
         "command": "brute_xor_find_pe",
-    }
+    },
+    {
+        "caption": "SMRT: Code Point To Unicode",
+        "command": "codepoint_to_unicode",
+    },
+    {
+        "caption": "SMRT: Unicode To Code Point",
+        "command": "unicode_to_codepoint",
+    },
 ]
