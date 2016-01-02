@@ -191,11 +191,11 @@
         "args": { "skip_zero_and_key": "True"}
     },
     {
-        "caption": "SMRT: Binary Text to Hex",
+        "caption": "SMRT: Binary to Hex",
         "command": "binary_to_hex",
     },
     {
-        "caption": "SMRT: Hex to Binary Text",
+        "caption": "SMRT: Hex to Binary",
         "command": "hex_to_binary",
     },
     {
