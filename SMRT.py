@@ -288,10 +288,10 @@ class FormatHexCommand(sublime_plugin.TextCommand):
 
 
 class BaseXxEncodeCommand(sublime_plugin.TextCommand):
-    def run(self, edit, xx=64, table=None):
+    def run(self, edit, xx=64, encoding='utf-8', table=None):
         for sel in self.view.sel():
             if not sel.empty():
-                text = self.view.substr(sel).encode('utf-8')
+                text = self.view.substr(sel).encode(encoding)
                 bxxtext = "*No Encoding Selected*"
                 if xx == 64:
                     bxxtext = base64.b64encode(text)
@@ -301,7 +301,7 @@ class BaseXxEncodeCommand(sublime_plugin.TextCommand):
 
 
 class BaseXxDecodeCommand(sublime_plugin.TextCommand):
-    def run(self, edit, xx=64, table=None):
+    def run(self, edit, xx=64, encoding='utf-8', table=None):
         for sel in self.view.sel():
             if not sel.empty():
                 bxxtext = self.view.substr(sel)
@@ -309,12 +309,12 @@ class BaseXxDecodeCommand(sublime_plugin.TextCommand):
                 if xx == 64 and re.search('^[A-Za-z0-9+/=]+$', bxxtext):
                     if len(bxxtext) % 4 != 0:
                         bxxtext += "=" * (4 - (len(bxxtext) % 4))
-                    text = base64.b64decode(bxxtext.encode('utf-8'))
+                    text = base64.b64decode(bxxtext.encode(encoding))
                 if xx == 32 and re.search('^[A-Z2-7=]+$', bxxtext):
                     if len(bxxtext) % 8 != 0:
                         bxxtext += "=" * (8 - (len(bxxtext) % 8))
-                    text = base64.b32decode(bxxtext.encode('utf-8'))
-                self.view.replace(edit, sel, text.decode('utf-8'))
+                    text = base64.b32decode(bxxtext.encode(encoding))
+                self.view.replace(edit, sel, text.decode(encoding))
 
 
 class BaseXxEncodeHexCommand(sublime_plugin.TextCommand):

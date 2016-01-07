@@ -15,6 +15,26 @@
         "args": { "xx": 32 }
     },
     {
+        "caption": "SMRT: UTF-16LE To Base64",
+        "command": "base_xx_encode",
+        "args": { "xx": 64, "encoding": "utf-16le" }
+    },
+    {
+        "caption": "SMRT: UTF-16LE To Base32",
+        "command": "base_xx_encode",
+        "args": { "xx": 32, "encoding": "utf-16le" }
+    },
+    {
+        "caption": "SMRT: UTF-16BE To Base64",
+        "command": "base_xx_encode",
+        "args": { "xx": 64, "encoding": "utf-16be" }
+    },
+    {
+        "caption": "SMRT: UTF-16BE To Base32",
+        "command": "base_xx_encode",
+        "args": { "xx": 32, "encoding": "utf-16be" }
+    },
+    {
         "caption": "SMRT: Base64 To UTF-8",
         "command": "base_xx_decode",
         "args": { "xx": 64 }
@@ -23,6 +43,26 @@
         "caption": "SMRT: Base32 To UTF-8",
         "command": "base_xx_decode",
         "args": { "xx": 32 }
+    },
+    {
+        "caption": "SMRT: Base64 To UTF-16LE",
+        "command": "base_xx_decode",
+        "args": { "xx": 64, "encoding": "utf-16le" }
+    },
+    {
+        "caption": "SMRT: Base32 To UTF-16LE",
+        "command": "base_xx_decode",
+        "args": { "xx": 32, "encoding": "utf-16le" }
+    },
+    {
+        "caption": "SMRT: Base64 To UTF-16BE",
+        "command": "base_xx_decode",
+        "args": { "xx": 64, "encoding": "utf-16be" }
+    },
+    {
+        "caption": "SMRT: Base32 To UTF-16BE",
+        "command": "base_xx_decode",
+        "args": { "xx": 32, "encoding": "utf-16be" }
     },
     {
         "caption": "SMRT: Rot13 Encode Text",
@@ -96,9 +136,14 @@
         "args": { "encoding": "utf-8"}
     },
     {
-        "caption": "SMRT: UTF-16 To Hex",
+        "caption": "SMRT: UTF-16LE To Hex",
         "command": "hex_encode",
-        "args": { "encoding": "utf-16 "}
+        "args": { "encoding": "utf-16le "}
+    },
+    {
+        "caption": "SMRT: UTF-16BE To Hex",
+        "command": "hex_encode",
+        "args": { "encoding": "utf-16be"}
     },
     {
         "caption": "SMRT: Hex To ASCII",
