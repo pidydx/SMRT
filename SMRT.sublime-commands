@@ -156,9 +156,14 @@
         "args": { "encoding": "utf-8 "}
     },
     {
-        "caption": "SMRT: Hex To UTF-16",
+        "caption": "SMRT: Hex To UTF-16LE",
         "command": "hex_decode",
-        "args": { "encoding": "utf-16"}
+        "args": { "encoding": "utf-16le"}
+    },
+    {
+        "caption": "SMRT: Hex To UTF-16BE",
+        "command": "hex_decode",
+        "args": { "encoding": "utf-16be"}
     },
     {
         "caption": "SMRT: Zlib Decompress Hex",
