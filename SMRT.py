@@ -408,69 +408,74 @@ class PeScannerCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         peid_sigs = sublime.packages_path() + '/SMRT/peid.db'
         for sel in self.view.sel():
-            hextext = ParseHex(self.view.substr(sel))
-            if hextext is not None:
-                pehex = pescanner.PEScanner(binascii.unhexlify(hextext), peid_sigs=peid_sigs)
-                report_file = self.view.window().new_file()
-                report_file.set_name("PE Scanner Report")
-                report_file.insert(edit, 0, '\n'.join(pehex.collect()))
+            if not sel.empty():
+                hextext = ParseHex(self.view.substr(sel))
+                if hextext is not None:
+                    pehex = pescanner.PEScanner(binascii.unhexlify(hextext), peid_sigs=peid_sigs)
+                    report_file = self.view.window().new_file()
+                    report_file.set_name("PE Scanner Report")
+                    report_file.insert(edit, 0, '\n'.join(pehex.collect()))
 
 
 class FindPeCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         window = self.view.window()
         for sel in self.view.sel():
-            hextext = ParseHex(self.view.substr(sel))
-            hextext_len = len(hextext)
-            for i in range(0, hextext_len):
-                if hextext_len - i > 128:
-                    if hextext[i:i+4] == '4D5A':
-                        pe_offset_bytes = hextext[i+120:i+120+8]
-                        pe_offset_bytesarray = list(reversed([pe_offset_bytes[n:n+2] for n in range(0, len(pe_offset_bytes), 2)]))
-                        pe_offset = int(''.join(pe_offset_bytesarray), 16) * 2
-                        if hextext_len - i > pe_offset + 4:
-                            if hextext[i+pe_offset:i+pe_offset+4] == '5045':
-                                pe_hextext = hextext[i:]
-                                output_file = window.new_file()
-                                output_file.set_name("OFFSET: %s" % i)
-                                output_file.insert(edit, 0, FormatHex(pe_hextext))
+            if not sel.empty():
+                hextext = ParseHex(self.view.substr(sel))
+                if hextext is not None:
+                    hextext_len = len(hextext)
+                    for i in range(0, hextext_len):
+                        if hextext_len - i > 128:
+                            if hextext[i:i+4] == '4D5A':
+                                pe_offset_bytes = hextext[i+120:i+120+8]
+                                pe_offset_bytesarray = list(reversed([pe_offset_bytes[n:n+2] for n in range(0, len(pe_offset_bytes), 2)]))
+                                pe_offset = int(''.join(pe_offset_bytesarray), 16) * 2
+                                if hextext_len - i > pe_offset + 4:
+                                    if hextext[i+pe_offset:i+pe_offset+4] == '5045':
+                                        pe_hextext = hextext[i:]
+                                        output_file = window.new_file()
+                                        output_file.set_name("OFFSET: %s" % i)
+                                        output_file.insert(edit, 0, FormatHex(pe_hextext))
 
 
 class BruteXorFindPeCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         window = self.view.window()
         for sel in self.view.sel():
-            hextext = ParseHex(self.view.substr(sel))
-            hextext_len = len(hextext)
-            for i in range(0, hextext_len):
-                if hextext_len - i > 128:
-                    alt_key = ''
-                    xor_key = XorData(hextext[i:i+4], '4d5a')
+            if not sel.empty():
+                hextext = ParseHex(self.view.substr(sel))
+                if hextext is not None:
+                    hextext_len = len(hextext)
+                    for i in range(0, hextext_len):
+                        if hextext_len - i > 128:
+                            alt_key = ''
+                            xor_key = XorData(hextext[i:i+4], '4d5a')
 
-                    if xor_key == '004d':
-                        alt_key = '4d'
+                            if xor_key == '004d':
+                                alt_key = '4d'
 
-                    if xor_key == '5a00':
-                        alt_key = '5a'
+                            if xor_key == '5a00':
+                                alt_key = '5a'
 
-                    pe_offset_bytes = hextext[i+120:i+120+8]
+                            pe_offset_bytes = hextext[i+120:i+120+8]
 
-                    def check_target(xor_key, skip_zero_and_key=False):
-                        pe_target = XorData(pe_offset_bytes, xor_key, skip_zero_and_key)
-                        pe_offset_bytesarray = list(reversed([pe_target[n:n+2] for n in range(0, len(pe_target), 2)]))
-                        pe_offset = int(''.join(pe_offset_bytesarray), 16) * 2
-                        if hextext_len - i > pe_offset + 4:
-                            if XorData(hextext[i+pe_offset:i+pe_offset+4], xor_key, skip_zero_and_key) == '5045':
-                                pe_hextext = XorData(hextext[i:], xor_key, skip_zero_and_key)
-                                output_file = window.new_file()
-                                output_file.set_name("Offset: %i  Key: %s Skips zero and keys: %s" % (i, xor_key, skip_zero_and_key))
-                                output_file.insert(edit, 0, FormatHex(pe_hextext))
+                            def check_target(xor_key, skip_zero_and_key=False):
+                                pe_target = XorData(pe_offset_bytes, xor_key, skip_zero_and_key)
+                                pe_offset_bytesarray = list(reversed([pe_target[n:n+2] for n in range(0, len(pe_target), 2)]))
+                                pe_offset = int(''.join(pe_offset_bytesarray), 16) * 2
+                                if hextext_len - i > pe_offset + 4:
+                                    if XorData(hextext[i+pe_offset:i+pe_offset+4], xor_key, skip_zero_and_key) == '5045':
+                                        pe_hextext = XorData(hextext[i:], xor_key, skip_zero_and_key)
+                                        output_file = window.new_file()
+                                        output_file.set_name("Offset: %i  Key: %s Skips zero and keys: %s" % (i, xor_key, skip_zero_and_key))
+                                        output_file.insert(edit, 0, FormatHex(pe_hextext))
 
-                    check_target(xor_key)
-                    check_target(xor_key, skip_zero_and_key=True)
+                            check_target(xor_key)
+                            check_target(xor_key, skip_zero_and_key=True)
 
-                    if alt_key:
-                        check_target(alt_key, skip_zero_and_key=True)
+                            if alt_key:
+                                check_target(alt_key, skip_zero_and_key=True)
 
 
 class CodepointToUnicode(sublime_plugin.TextCommand):
