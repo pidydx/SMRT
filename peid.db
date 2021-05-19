@@ -3893,7 +3893,7 @@ ep_only = true
 signature = 50 43 52 59 50 54 FF 76 33 2E 35 31 00 E9
 ep_only = true
 
-[PcShare ???????? v4.0 -> ??ɷ??
+[PcShare v4.0]
 signature = 55 8B EC 6A FF 68 90 34 40 00 68 B6 28 40 00 64 A1
 ep_only = true
 
